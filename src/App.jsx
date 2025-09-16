@@ -69,84 +69,8 @@ function Shop() {
 
 export default Shop;
 
-src/components/Dashboard.js
-function Dashboard() {
-  // Mock data for demonstration
-  const stats = {
-    totalEnergy: '1,245 kWh',
-    devices: 150,
-    locations: 10,
-  };
 
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold text-center mb-6">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-          <h2 className="text-xl font-semibold mb-2">Total Energy</h2>
-          <p className="text-2xl font-bold">{stats.totalEnergy}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-          <h2 className="text-xl font-semibold mb-2">Connected Devices</h2>
-          <p className="text-2xl font-bold">{stats.devices}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-          <h2 className="text-xl font-semibold mb-2">Locations</h2>
-          <p className="text-2xl font-bold">{stats.locations}</p>
-        </div>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4">Energy Production by Location</h2>
-        <p className="text-gray-600">Placeholder for real-time analytics chart (e.g., using Chart.js).</p>
-      </div>
-    </div>
-  );
-}
 
-export default Dashboard;
-
-src/components/Transparency.js
-function Transparency() {
-  // Mock blockchain data
-  const transactions = [
-    { id: 'tx1', energy: '5.2 kWh', timestamp: '2025-09-15 10:00', hash: '0xabc123...' },
-    { id: 'tx2', energy: '3.8 kWh', timestamp: '2025-09-15 09:45', hash: '0xdef456...' },
-  ];
-
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold text-center mb-6">Blockchain Transparency</h1>
-      <p className="text-lg text-center mb-8">
-        View immutable records of energy production stored on the blockchain.
-      </p>
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2">Transaction ID</th>
-              <th className="p-2">Energy Generated</th>
-              <th className="p-2">Timestamp</th>
-              <th className="p-2">Hash</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((tx) => (
-              <tr key={tx.id} className="border-b">
-                <td className="p-2">{tx.id}</td>
-                <td className="p-2">{tx.energy}</td>
-                <td className="p-2">{tx.timestamp}</td>
-                <td className="p-2 truncate">{tx.hash}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-export default Transparency;
 
 
 
