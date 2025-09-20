@@ -138,7 +138,7 @@ export default function Home() {
               <img
                 src={image}
                 alt="Smart Power Logo"
-                className="w-30 h-20"
+                className="w-25 h-12"
               />{" "}
               {/* Replace with actual logo path */}
               {/* <span className="text-xl font-bold text-[#4A2E1E]">
@@ -484,14 +484,14 @@ export default function Home() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src="/smart-power-logo.png"
+                  src={image}
                   alt="Smart Power Logo"
-                  className="w-8 h-8"
+                  className="w-25 h-12"
                 />{" "}
                 {/* Replace with actual logo path */}
-                <span className="text-lg font-bold text-[#4A2E1E]">
+                {/* <span className="text-lg font-bold text-[#4A2E1E]">
                   Smart Power
-                </span>
+                </span> */}
               </div>
               <p className="text-gray-600">
                 Footstep-powered energy generation with piezoelectric
