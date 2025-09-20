@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import image from '../assets/image.png'
 import {
   ChevronRight,
   Zap,
@@ -135,14 +136,15 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
-                src="/smart-power-logo.png"
+                src={image}
                 alt="Smart Power Logo"
-                className="w-10 h-10"
+                className="w-30 h-20"
               />{" "}
               {/* Replace with actual logo path */}
-              <span className="text-xl font-bold text-[#4A2E1E]">
+              {/* <span className="text-xl font-bold text-[#4A2E1E]">
                 Smart Power
-              </span>
+              </span> */}
+              {/* <img src={image} alt="" /> */}
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a
