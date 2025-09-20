@@ -256,7 +256,7 @@ export default function Home() {
 
             <div className="relative">
               <img 
-                src="/hero-footstep-energy.jpg" 
+                src="https://images.unsplash.com/photo-1440985465094-6ac443aab454?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
                 alt="Piezoelectric energy generation in action" 
                 className="w-full rounded-3xl shadow-xl mb-8 animate-fade-in"
               /> {/* Added hero image for visual appeal */}
