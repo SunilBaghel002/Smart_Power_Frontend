@@ -1,675 +1,305 @@
+// src/components/Home.js
 import React, { useState, useEffect } from "react";
-import image from '../assets/image.png'
 import {
-  ChevronRight,
   Zap,
   Shield,
-  Globe,
   BarChart3,
-  Cpu,
-  Layers,
-  Users,
-  ArrowRight,
+  Globe,
+  ChevronRight,
   Play,
-  CheckCircle,
-  TrendingUp,
-  MapPin,
-  Footprints,
-  BatteryCharging,
-  Leaf,
-  Quote,
+  Package,
+  Activity,
 } from "lucide-react";
 
-export default function Home() {
-  const [energyCount, setEnergyCount] = useState(0);
-  const [footstepsCount, setFootstepsCount] = useState(0);
+const Home = () => {
+  // Animated counters state
+  const [stats, setStats] = useState({
+    energy: 0,
+    devices: 0,
+    locations: 0,
+    transparency: 0,
+  });
 
+  // Animate counters on component mount
   useEffect(() => {
-    // Animated counters
-    const energyTarget = 47283;
-    const footstepsTarget = 124700;
-
-    const animateCounter = (target, setter, duration = 2000) => {
-      let start = 0;
-      const increment = target / (duration / 16);
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= target) {
-          setter(target);
-          clearInterval(timer);
-        } else {
-          setter(Math.floor(start));
-        }
-      }, 16);
+    const targets = {
+      energy: 47283,
+      devices: 1247,
+      locations: 89,
+      transparency: 99.8,
     };
 
-    const timer = setTimeout(() => {
-      animateCounter(energyTarget, setEnergyCount);
-      animateCounter(footstepsTarget, setFootstepsCount);
-    }, 1000);
+    const duration = 2000; // 2 seconds
+    const steps = 60; // 60 steps for smooth animation
+    const stepDuration = duration / steps;
 
-    return () => clearTimeout(timer);
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+
+      setStats({
+        energy: Math.floor(targets.energy * progress),
+        devices: Math.floor(targets.devices * progress),
+        locations: Math.floor(targets.locations * progress),
+        transparency: (targets.transparency * progress).toFixed(1),
+      });
+
+      if (currentStep >= steps) {
+        clearInterval(timer);
+        // Set final values to ensure accuracy
+        setStats(targets);
+      }
+    }, stepDuration);
+
+    return () => clearInterval(timer);
   }, []);
 
-  const features = [
-    {
-      icon: <Leaf className="w-6 h-6" />,
-      title: "Piezoelectric Sensors",
-      description:
-        "High-efficiency sensors that convert footsteps into usable electricity",
-    },
-    {
-      icon: <Cpu className="w-6 h-6" />,
-      title: "Smart Hardware Integration",
-      description:
-        "Compatible with Arduino and other microcontrollers for custom setups",
-    },
-    {
-      icon: <BarChart3 className="w-6 h-6" />,
-      title: "Real-Time Data Dashboard",
-      description:
-        "Monitor energy generation, footsteps, and efficiency metrics live",
-    },
-    {
-      icon: <Globe className="w-6 h-6" />,
-      title: "Global Installation Map",
-      description:
-        "Visualize installations and collective energy impact worldwide",
-    },
-  ];
-
-  const stats = [
-    {
-      label: "Energy Units Generated",
-      value: energyCount.toLocaleString(),
-      icon: <BatteryCharging className="w-5 h-5" />,
-    },
-    {
-      label: "Footsteps Captured",
-      value: footstepsCount.toLocaleString(),
-      icon: <Footprints className="w-5 h-5" />,
-    },
-    {
-      label: "Locations Active",
-      value: "89",
-      icon: <MapPin className="w-5 h-5" />,
-    },
-    {
-      label: "Efficiency Rating",
-      value: "98%",
-      icon: <TrendingUp className="w-5 h-5" />,
-    },
-  ];
-
-  const products = [
-    {
-      name: "Individual Components",
-      description: "Piezoelectric sensors, wiring, and supporting hardware",
-      price: "From $29",
-      features: ["Easy Installation", "High Durability", "Technical Guides"],
-      image: "/product-components.jpg", // Placeholder for product image
-    },
-    {
-      name: "Complete Kit",
-      description: "Full footstep energy generation system with monitoring",
-      price: "From $199",
-      features: ["All-in-One Hardware", "Data Integration", "Setup Support"],
-      popular: true,
-      image: "/product-kit.jpg", // Placeholder for product image
-    },
-    {
-      name: "Modular Expansion Packs",
-      description:
-        "Scalable add-ons for larger installations and custom projects",
-      price: "From $89",
-      features: [
-        "Flexible Design",
-        "Seamless Integration",
-        "Expandable Capacity",
-      ],
-      image: "/product-expansion.jpg", // Placeholder for product image
-    },
-  ];
-
-  const howItWorks = [
-    {
-      step: 1,
-      title: "Install Sensors",
-      description: "Place piezoelectric sensors in high-traffic areas to capture footsteps.",
-      icon: <Footprints className="w-8 h-8 text-[#A55A5A]" />,
-    },
-    {
-      step: 2,
-      title: "Connect Hardware",
-      description: "Integrate with Arduino or other controllers for energy harvesting.",
-      icon: <Cpu className="w-8 h-8 text-[#A55A5A]" />,
-    },
-    {
-      step: 3,
-      title: "Monitor & Optimize",
-      description: "Track data in real-time and optimize for maximum efficiency.",
-      icon: <BarChart3 className="w-8 h-8 text-[#A55A5A]" />,
-    },
-  ];
-
-  const testimonials = [
-    {
-      quote: "Smart Power transformed our office into an energy-generating space. Incredible innovation!",
-      author: "Jane Doe, Sustainability Manager",
-    },
-    {
-      quote: "The real-time dashboard makes monitoring so easy. Highly recommend the complete kit.",
-      author: "John Smith, Tech Enthusiast",
-    },
-    {
-      quote: "Eco-friendly and efficient. We've reduced our carbon footprint significantly.",
-      author: "Alex Johnson, Green Startup Founder",
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <img
-                src={image}
-                alt="Smart Power Logo"
-                className="w-auto h-16"
-              />{" "}
-              {/* Increased logo size for better visibility */}
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
-                className="hover:text-[#A55A5A] transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#how-it-works"
-                className="hover:text-[#A55A5A] transition-colors"
-              >
-                How It Works
-              </a>
-              <a
-                href="#products"
-                className="hover:text-[#A55A5A] transition-colors"
-              >
-                Products
-              </a>
-              <a
-                href="#dashboard"
-                className="hover:text-[#A55A5A] transition-colors"
-              >
-                Dashboard
-              </a>
-              <button className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] px-6 py-2 rounded-full text-white hover:from-[#DAAFAF] hover:to-[#954A4A] transition-all transform hover:scale-105">
-                Get Started
-              </button>
+    <div className="min-h-screen bg-gray-800">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-bounce"></div>
+        </div>
+
+        <div className="relative z-10 text-center max-w-5xl mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center px-4 py-2 mb-8 bg-gradient-to-r from-green-400/20 to-blue-500/20 backdrop-blur-lg rounded-full border border-green-400/30">
+            <Shield className="h-4 w-4 text-green-400 mr-2" />
+            <span className="text-sm font-medium text-green-400">
+              Blockchain-Powered Transparency
+            </span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Harvest Energy,{" "}
+            <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+              Trust the Data
+            </span>
+          </h1>
+
+          {/* Description */}
+          <p className="text-xl sm:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Experience the future of sustainable energy with our Arduino-powered
+            piezoelectric sensors and blockchain transparency. Every step
+            generates power, every transaction builds trust.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+            <button className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-400 to-blue-500 text-white font-semibold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-green-400/25">
+              <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+              Watch Demo
+            </button>
+            <button className="inline-flex items-center px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-lg hover:border-green-400/50 hover:bg-green-400/10 transition-all duration-300 backdrop-blur-lg">
+              <Package className="h-5 w-5 mr-2" />
+              Explore Products
+              <ChevronRight className="h-5 w-5 ml-2" />
+            </button>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="animate-bounce">
+            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
             </div>
           </div>
         </div>
-      </nav>
+      </section>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        {/* Subtle leaf background pattern */}
-        <div className="absolute inset-0 bg-[url('/leaf-pattern.png')] bg-repeat opacity-5" /> {/* Assume a light leaf pattern image */}
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center space-x-2 bg-[#E8BFBF]/10 border border-[#A55A5A]/20 rounded-full px-4 py-2 animate-fade-in">
-                <Leaf className="w-4 h-4 text-[#A55A5A]" />
-                <span className="text-[#A55A5A] text-sm font-medium">
-                  Eco-Friendly Energy Harvesting
-                </span>
-              </div>
+      {/* Stats Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-48 h-48 bg-green-400/5 rounded-full blur-2xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/3 w-64 h-64 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+        </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold leading-tight animate-fade-in delay-100">
-                Power Your World,
-                <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] bg-clip-text text-transparent">
-                  {" "}
-                  One Step at a Time
-                </span>
-              </h1>
-
-              <p className="text-xl text-gray-600 leading-relaxed animate-fade-in delay-200">
-                Innovative platform using piezoelectric sensors to generate
-                electricity from footsteps. Track data, buy components, and
-                contribute to sustainable energy.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in delay-300">
-                <button className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] px-8 py-4 rounded-xl text-white hover:from-[#DAAFAF] hover:to-[#954A4A] transition-all transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold">
-                  <Play className="w-5 h-5" />
-                  <span>Watch Demo</span>
-                </button>
-                <button className="border border-gray-300 px-8 py-4 rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center space-x-2 font-semibold">
-                  <span>Explore Products</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1440985465094-6ac443aab454?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                alt="Piezoelectric energy generation in action" 
-                className="w-full rounded-3xl shadow-xl mb-8 animate-fade-in"
-              /> {/* Added hero image for visual appeal */}
-              <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-lg animate-fade-in delay-200">
-                <div className="grid grid-cols-2 gap-6">
-                  {stats.map((stat, index) => (
-                    <div key={index} className="text-center space-y-2">
-                      <div className="flex items-center justify-center text-[#A55A5A]">
-                        {stat.icon}
-                      </div>
-                      <div className="text-2xl font-bold">{stat.value}</div>
-                      <div className="text-sm text-gray-500">{stat.label}</div>
-                    </div>
-                  ))}
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <div className="backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-8 sm:p-12 hover:border-green-400/30 transition-all duration-500 group">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Energy Units Harvested */}
+              <div className="text-center group-hover:scale-105 transition-transform duration-300">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-400/20 to-green-500/20 rounded-full mb-4">
+                  <Zap className="h-8 w-8 text-green-400" />
                 </div>
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                  {stats.energy.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-400">kWh Harvested</div>
               </div>
 
-              {/* Enhanced floating elements with more animation */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] rounded-full opacity-30 animate-pulse blur-md"></div>
-              <div className="absolute -bottom-10 -left-10 w-20 h-20 bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] rounded-full opacity-20 animate-bounce blur-md"></div>
+              {/* Devices Connected */}
+              <div className="text-center group-hover:scale-105 transition-transform duration-300 delay-100">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-full mb-4">
+                  <Activity className="h-8 w-8 text-blue-400" />
+                </div>
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                  {stats.devices.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-400">Devices Connected</div>
+              </div>
+
+              {/* Locations Active */}
+              <div className="text-center group-hover:scale-105 transition-transform duration-300 delay-200">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-400/20 to-purple-500/20 rounded-full mb-4">
+                  <Globe className="h-8 w-8 text-purple-400" />
+                </div>
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                  {stats.locations}
+                </div>
+                <div className="text-sm text-gray-400">Locations Active</div>
+              </div>
+
+              {/* Transparency Score */}
+              <div className="text-center group-hover:scale-105 transition-transform duration-300 delay-300">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-400/20 to-blue-500/20 rounded-full mb-4">
+                  <Shield className="h-8 w-8 text-green-400" />
+                </div>
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                  {stats.transparency}%
+                </div>
+                <div className="text-sm text-gray-400">Transparency Score</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-6 mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold animate-fade-in">
-              <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] bg-clip-text text-transparent">
-                Complete Energy Solution
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+              Powering the{" "}
+              <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                Future
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in delay-100">
-              From hardware sensors to data visualization, build and monitor
-              your footstep-powered energy system.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Cutting-edge technology meets sustainable innovation. Experience
+              the perfect fusion of hardware reliability and blockchain
+              transparency.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-[#A55A5A]/50 transition-all hover:transform hover:-translate-y-2 shadow-sm hover:shadow-md animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="text-[#A55A5A] mb-4 group-hover:scale-110 transition-transform">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3 text-[#4A2E1E]">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Arduino-Powered Hardware */}
+            <div className="group backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 p-8 hover:border-green-400/50 hover:scale-105 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-400/20 to-green-500/20 rounded-lg mb-6 group-hover:scale-110 transition-transform">
+                <Zap className="h-6 w-6 text-green-400" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section - Added for better engagement */}
-      <section id="how-it-works" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-6 mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#4A2E1E] animate-fade-in">
-              How It Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in delay-100">
-              Simple steps to start generating power from your footsteps.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {howItWorks.map((step, index) => (
-              <div 
-                key={index} 
-                className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow animate-fade-in"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="flex justify-center mb-4">
-                  {step.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-[#4A2E1E] mb-2">Step {step.step}: {step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products Section */}
-      <section id="products" className="py-20 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-6 mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#4A2E1E] animate-fade-in">
-              Choose Your Setup
-            </h2>
-            <p className="text-xl text-gray-600 animate-fade-in delay-100">
-              From components to full kits for your energy project
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {products.map((product, index) => (
-              <div
-                key={index}
-                className={`relative bg-white rounded-2xl p-8 border transition-all hover:transform hover:-translate-y-2 shadow-md hover:shadow-xl animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {product.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] px-4 py-1 rounded-full text-sm font-semibold text-white">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-
-                <div className="space-y-6">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full h-48 object-cover rounded-xl"
-                  /> {/* Added product images for visual appeal */}
-                  <div>
-                    <h3 className="text-2xl font-bold text-[#4A2E1E]">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 mt-2">{product.description}</p>
-                  </div>
-
-                  <div className="text-3xl font-bold text-[#A55A5A]">
-                    {product.price}
-                  </div>
-
-                  <ul className="space-y-3">
-                    {product.features.map((feature, fIndex) => (
-                      <li key={fIndex} className="flex items-center space-x-3">
-                        <CheckCircle className="w-5 h-5 text-[#A55A5A] flex-shrink-0" />
-                        <span className="text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    className={`w-full py-3 rounded-xl font-semibold transition-all text-white ${
-                      product.popular
-                        ? "bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] hover:from-[#DAAFAF] hover:to-[#954A4A]"
-                        : "bg-gray-200 text-gray-900 hover:bg-gray-300"
-                    }`}
-                  >
-                    Get Started
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section - Added for social proof */}
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-6 mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#4A2E1E] animate-fade-in">
-              What Our Users Say
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in delay-100">
-              Hear from those powering their world with Smart Power.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                key={index} 
-                className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow animate-fade-in"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <Quote className="w-8 h-8 text-[#A55A5A] mb-4" />
-                <p className="text-gray-600 mb-4 italic">"{testimonial.quote}"</p>
-                <p className="text-[#4A2E1E] font-semibold">- {testimonial.author}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Dashboard Preview Section */}
-      <section id="dashboard" className="py-20 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-fade-in">
-              <h2 className="text-4xl lg:text-5xl font-bold text-[#4A2E1E]">
-                Live
-                <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] bg-clip-text text-transparent">
-                  {" "}
-                  Data Insights
-                </span>
-              </h2>
-
-              <p className="text-xl text-gray-600">
-                Track your energy generation in real-time. View footsteps, power
-                output, and efficiency across all your installations.
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Arduino-Powered Hardware
+              </h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Industrial-grade piezoelectric sensors powered by Arduino Uno
+                microcontrollers. Harvest kinetic energy from footsteps with
+                military-grade reliability and precision.
               </p>
-
-              <div className="space-y-4">
-                {[
-                  "Real-time footsteps and energy tracking",
-                  "Customizable data visualizations",
-                  "Global installation mapping",
-                  "Detailed performance reports",
-                ].map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#A55A5A] rounded-full"></div>
-                    <span className="text-gray-600">{feature}</span>
-                  </div>
-                ))}
+              <div className="flex items-center text-green-400 font-semibold group-hover:text-green-300 transition-colors">
+                Learn More
+                <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </div>
+            </div>
 
-              <button className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] px-8 py-4 rounded-xl text-white hover:from-[#DAAFAF] hover:to-[#954A4A] transition-all transform hover:scale-105 flex items-center space-x-2 font-semibold">
-                <BarChart3 className="w-5 h-5" />
-                <span>View Dashboard</span>
+            {/* Blockchain Transparency */}
+            <div className="group backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 p-8 hover:border-blue-400/50 hover:scale-105 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-lg mb-6 group-hover:scale-110 transition-transform">
+                <Shield className="h-6 w-6 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Blockchain Transparency
+              </h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Every energy transaction is immutably recorded on the
+                blockchain. Complete transparency, zero tampering, and
+                verifiable data integrity for all stakeholders.
+              </p>
+              <div className="flex items-center text-blue-400 font-semibold group-hover:text-blue-300 transition-colors">
+                View Ledger
+                <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            {/* Admin Dashboard */}
+            <div className="group backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 p-8 hover:border-purple-400/50 hover:scale-105 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-400/20 to-purple-500/20 rounded-lg mb-6 group-hover:scale-110 transition-transform">
+                <BarChart3 className="h-6 w-6 text-purple-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Admin Dashboard
+              </h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Real-time analytics and monitoring dashboard. Track energy
+                production, device performance, and global distribution with
+                advanced visualization tools.
+              </p>
+              <div className="flex items-center text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
+                Open Dashboard
+                <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            {/* Global Energy Map */}
+            <div className="group backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 p-8 hover:border-green-400/50 hover:scale-105 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-400/20 to-blue-500/20 rounded-lg mb-6 group-hover:scale-110 transition-transform">
+                <Globe className="h-6 w-6 text-green-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Global Energy Map
+              </h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Visualize clean energy contributions worldwide. Interactive
+                global map showing real-time energy harvesting across continents
+                and communities.
+              </p>
+              <div className="flex items-center text-green-400 font-semibold group-hover:text-green-300 transition-colors">
+                Explore Map
+                <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-12 hover:border-green-400/30 transition-all duration-500">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+              Ready to{" "}
+              <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                Get Started?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join the energy revolution today. Deploy sustainable energy
+              solutions with complete transparency and real-time monitoring.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-400 to-blue-500 text-white font-semibold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-green-400/25">
+                <Package className="h-5 w-5 mr-2" />
+                Shop Products
+              </button>
+              <button className="inline-flex items-center px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-lg hover:border-green-400/50 hover:bg-green-400/10 transition-all duration-300 backdrop-blur-lg">
+                <Play className="h-5 w-5 mr-2" />
+                Watch Demo
               </button>
             </div>
-
-            <div className="relative animate-fade-in delay-200">
-              <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-[#4A2E1E]">
-                      Energy Dashboard
-                    </h3>
-                    <div className="flex items-center space-x-2 text-[#A55A5A]">
-                      <div className="w-2 h-2 bg-[#A55A5A] rounded-full animate-pulse"></div>
-                      <span className="text-sm">Live</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 rounded-xl p-4">
-                      <div className="flex items-center space-x-2 text-[#A55A5A] mb-2">
-                        <TrendingUp className="w-4 h-4" />
-                        <span className="text-sm">Total Output</span>
-                      </div>
-                      <div className="text-2xl font-bold">
-                        {energyCount.toLocaleString()}
-                      </div>
-                      <div className="text-xs text-gray-500">mWh Generated</div>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-xl p-4">
-                      <div className="flex items-center space-x-2 text-[#A55A5A] mb-2">
-                        <Footprints className="w-4 h-4" />
-                        <span className="text-sm">Footsteps</span>
-                      </div>
-                      <div className="text-2xl font-bold">
-                        {footstepsCount.toLocaleString()}
-                      </div>
-                      <div className="text-xs text-gray-500">Captured</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <div className="flex items-center space-x-2 text-[#A55A5A] mb-3">
-                      <Globe className="w-4 h-4" />
-                      <span className="text-sm">Global Distribution</span>
-                    </div>
-                    <div className="space-y-2">
-                      {["North America", "Europe", "Asia Pacific"].map(
-                        (region, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between"
-                          >
-                            <span className="text-sm text-gray-500">
-                              {region}
-                            </span>
-                            <div className="flex items-center space-x-2">
-                              <div className="w-16 bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] h-2 rounded-full"
-                                  style={{ width: `${65 - index * 15}%` }}
-                                ></div>
-                              </div>
-                              <span className="text-xs text-gray-500">
-                                {65 - index * 15}%
-                              </span>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#E8BFBF]/10 to-[#A55A5A]/10" />
-        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <h2 className="text-4xl lg:text-5xl font-bold text-[#4A2E1E] animate-fade-in">
-            Ready to Generate
-            <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] bg-clip-text text-transparent">
-              {" "}
-              Sustainable Power?
-            </span>
-          </h2>
-
-          <p className="text-xl text-gray-600 animate-fade-in delay-100">
-            Start harvesting energy from footsteps today. Buy components, track
-            data, and join the green energy movement.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
-            <button className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] px-8 py-4 rounded-xl text-white hover:from-[#DAAFAF] hover:to-[#954A4A] transition-all transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold">
-              <Leaf className="w-5 h-5" />
-              <span>Start Building</span>
-            </button>
-            <button className="border border-gray-300 px-8 py-4 rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center space-x-2 font-semibold">
-              <span>Schedule Demo</span>
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 py-12 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <img
-                  src={image}
-                  alt="Smart Power Logo"
-                  className="w-auto h-12"
-                />{" "}
-                {/* Adjusted logo size */}
-              </div>
-              <p className="text-gray-600">
-                Footstep-powered energy generation with piezoelectric
-                technology.
-              </p>
-            </div>
-
-            {[
-              {
-                title: "Products",
-                links: ["Components", "Kits", "Expansion Packs", "Accessories"],
-              },
-              {
-                title: "Platform",
-                links: [
-                  "Dashboard",
-                  "Data Analytics",
-                  "Installation Guides",
-                  "API",
-                ],
-              },
-              {
-                title: "Support",
-                links: ["Help Center", "Community Forum", "Contact", "FAQs"],
-              },
-            ].map((section, index) => (
-              <div key={index} className="space-y-4">
-                <h3 className="font-semibold text-[#4A2E1E]">
-                  {section.title}
-                </h3>
-                <ul className="space-y-2">
-                  {section.links.map((link, linkIndex) => (
-                    <li key={linkIndex}>
-                      <a
-                        href="#"
-                        className="text-gray-600 hover:text-[#A55A5A] transition-colors"
-                      >
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center">
-            <div className="text-gray-500 text-sm">
-              © 2025 Smart Power. All rights reserved.
-            </div>
-            <div className="flex items-center space-x-6 mt-4 sm:mt-0">
-              <a
-                href="#"
-                className="text-gray-500 hover:text-[#A55A5A] transition-colors text-sm"
-              >
-                Privacy
-              </a>
-              <a
-                href="#"
-                className="text-gray-500 hover:text-[#A55A5A] transition-colors text-sm"
-              >
-                Terms
-              </a>
-              <a
-                href="#"
-                className="text-gray-500 hover:text-[#A55A5A] transition-colors text-sm"
-              >
-                Security
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
-}
+};
+
+export default Home;
