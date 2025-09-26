@@ -8,7 +8,7 @@ import Transparency from './components/Transparency';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen ">
         {/* Navigation */}
         <nav className="bg-gray-800 p-4">
           <div className="container mx-auto flex justify-between items-center">
