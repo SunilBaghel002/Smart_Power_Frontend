@@ -26,25 +26,35 @@ import {
 export default function Dashboard() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("24h");
   const [realTimeData, setRealTimeData] = useState({
-    totalEnergy: 52847,
-    activeDevices: 1563,
-    energyRate: 142.5,
+    totalSteps: 0,
+    voltageProduced: 0.00,
+    energyRate: 0.00,
     efficiency: 94.2,
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Simulate real-time data updates
+  // Gradual increase for totalSteps and voltageProduced after 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRealTimeData((prev) => ({
-        totalEnergy: prev.totalEnergy + Math.floor(Math.random() * 10),
-        activeDevices: prev.activeDevices + (Math.random() > 0.5 ? 1 : -1),
-        energyRate: 140 + Math.random() * 10,
-        efficiency: 92 + Math.random() * 4,
-      }));
-    }, 3000);
+    let timeout;
+    let interval;
 
-    return () => clearInterval(interval);
+    // Start after 10 seconds
+    timeout = setTimeout(() => {
+      interval = setInterval(() => {
+        setRealTimeData((prev) => ({
+          ...prev,
+          totalSteps: prev.totalSteps + 1,
+          voltageProduced: 3+ Math.random()*1,
+          energyRate: 15 + Math.random() * 5, // Lower range: 15-20 kW/hour
+          efficiency: 92 + Math.random() * 4,
+        }));
+      }, 3000); // Update every 2 seconds
+    }, 20000); // 10-second delay
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleRefresh = () => {
@@ -174,15 +184,22 @@ export default function Dashboard() {
                 className={`p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all ${
                   isRefreshing ? "animate-spin" : ""
                 }`}
+                aria-label="Refresh dashboard data"
               >
                 <RefreshCw className="w-5 h-5" />
               </button>
 
-              <button className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
+              <button
+                className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all"
+                aria-label="View notifications"
+              >
                 <Bell className="w-5 h-5" />
               </button>
 
-              <button className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
+              <button
+                className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all"
+                aria-label="Open settings"
+              >
                 <Settings className="w-5 h-5" />
               </button>
             </div>
@@ -198,12 +215,12 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-400 text-sm font-medium">
-                  Total Energy Harvested
+                  Total Steps
                 </p>
                 <p className="text-3xl font-bold">
-                  {realTimeData.totalEnergy.toLocaleString()}
+                  {realTimeData.totalSteps.toLocaleString()}
                 </p>
-                <p className="text-green-400 text-sm">kWh</p>
+                <p className="text-green-400 text-sm">Steps</p>
               </div>
               <div className="p-3 bg-green-500/20 rounded-xl">
                 <Zap className="w-8 h-8 text-green-400" />
@@ -221,12 +238,12 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-400 text-sm font-medium">
-                  Active Devices
+                  Voltage Produced
                 </p>
                 <p className="text-3xl font-bold">
-                  {realTimeData.activeDevices.toLocaleString()}
+                  {realTimeData.voltageProduced.toLocaleString()}
                 </p>
-                <p className="text-blue-400 text-sm">Connected</p>
+                <p className="text-blue-400 text-sm">mV</p>
               </div>
               <div className="p-3 bg-blue-500/20 rounded-xl">
                 <Cpu className="w-8 h-8 text-blue-400" />
@@ -294,6 +311,7 @@ export default function Dashboard() {
                   value={selectedTimeRange}
                   onChange={(e) => setSelectedTimeRange(e.target.value)}
                   className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-sm"
+                  aria-label="Select time range for energy production trends"
                 >
                   <option value="24h">Last 24 Hours</option>
                   <option value="7d">Last 7 Days</option>
@@ -367,10 +385,16 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold">Location Performance</h3>
               <div className="flex items-center space-x-2">
-                <button className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
+                <button
+                  className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all"
+                  aria-label="Filter locations"
+                >
                   <Filter className="w-4 h-4" />
                 </button>
-                <button className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
+                <button
+                  className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all"
+                  aria-label="Download location data"
+                >
                   <Download className="w-4 h-4" />
                 </button>
               </div>
