@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import image from '../assets/image.png'
+import image from "../assets/image.png";
 import {
   ChevronRight,
   Zap,
@@ -54,27 +54,27 @@ export default function Home() {
   const features = [
     {
       icon: <Leaf className="w-6 h-6" />,
-      title: "Piezoelectric Sensors",
+      title: "Eco-Friendly Brick Housing",
       description:
-        "High-efficiency sensors that convert footsteps into usable electricity",
+        "Made from 100% recycled plastic waste, creating sustainable infrastructure from environmental waste",
     },
     {
       icon: <Cpu className="w-6 h-6" />,
-      title: "Smart Hardware Integration",
+      title: "Arduino-Powered Intelligence",
       description:
-        "Compatible with Arduino and other microcontrollers for custom setups",
+        "Arduino Uno + TP4056 charging modules + piezoelectric sensors for complete energy harvesting systems",
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
-      title: "Real-Time Data Dashboard",
+      title: "Real-Time Energy Monitoring",
       description:
-        "Monitor energy generation, footsteps, and efficiency metrics live",
+        "Live dashboard showing step counts, voltage output, energy stored, and system efficiency",
     },
     {
       icon: <Globe className="w-6 h-6" />,
-      title: "Global Installation Map",
+      title: "Smart City Integration",
       description:
-        "Visualize installations and collective energy impact worldwide",
+        "Deploy in walkways, campuses, and public spaces to power LED lighting and IoT devices",
     },
   ];
 
@@ -103,67 +103,88 @@ export default function Home() {
 
   const products = [
     {
-      name: "Individual Components",
-      description: "Piezoelectric sensors, wiring, and supporting hardware",
-      price: "From $29",
-      features: ["Easy Installation", "High Durability", "Technical Guides"],
-      image: "/product-components.jpg", // Placeholder for product image
-    },
-    {
-      name: "Complete Kit",
-      description: "Full footstep energy generation system with monitoring",
-      price: "From $199",
-      features: ["All-in-One Hardware", "Data Integration", "Setup Support"],
-      popular: true,
-      image: "/product-kit.jpg", // Placeholder for product image
-    },
-    {
-      name: "Modular Expansion Packs",
+      name: "Smart Brick Single Unit",
       description:
-        "Scalable add-ons for larger installations and custom projects",
-      price: "From $89",
+        "Individual eco-brick with embedded piezoelectric sensor and basic electronics",
+      price: "From $149",
       features: [
-        "Flexible Design",
-        "Seamless Integration",
-        "Expandable Capacity",
+        "Recycled Plastic Housing",
+        "Piezoelectric Sensor",
+        "Weatherproof Design",
       ],
-      image: "/product-expansion.jpg", // Placeholder for product image
+      image:
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
+    },
+    {
+      name: "Complete Energy System",
+      description:
+        "Full installation kit with Arduino, TP4056, battery, WiFi module, and monitoring dashboard",
+      price: "From $399",
+      features: [
+        "Arduino Uno R3",
+        "Energy Storage",
+        "Real-time Dashboard",
+        "Mobile App",
+      ],
+      popular: true,
+      image:
+        "https://images.unsplash.com/photo-1553406830-c143465ac264?w=400&q=80",
+    },
+    {
+      name: "Commercial Installation",
+      description:
+        "Large-scale deployment package for campuses, plazas, and commercial walkways",
+      price: "From $2,999",
+      features: [
+        "50+ Smart Bricks",
+        "Central Monitoring Hub",
+        "Professional Installation",
+        "Maintenance Support",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80",
     },
   ];
 
   const howItWorks = [
     {
       step: 1,
-      title: "Install Sensors",
-      description: "Place piezoelectric sensors in high-traffic areas to capture footsteps.",
+      title: "Embed Smart Bricks",
+      description:
+        "Install recycled plastic bricks with built-in piezoelectric sensors in walkways, plazas, and high-traffic areas.",
       icon: <Footprints className="w-8 h-8 text-[#A55A5A]" />,
     },
     {
       step: 2,
-      title: "Connect Hardware",
-      description: "Integrate with Arduino or other controllers for energy harvesting.",
+      title: "Arduino Processing",
+      description:
+        "Arduino Uno microcontroller processes sensor data, manages TP4056 charging, and stores energy in Li-ion batteries.",
       icon: <Cpu className="w-8 h-8 text-[#A55A5A]" />,
     },
     {
       step: 3,
-      title: "Monitor & Optimize",
-      description: "Track data in real-time and optimize for maximum efficiency.",
+      title: "Real-Time Analytics",
+      description:
+        "ESP8266 WiFi modules transmit data to cloud dashboard for live monitoring of energy generation and system health.",
       icon: <BarChart3 className="w-8 h-8 text-[#A55A5A]" />,
     },
   ];
 
   const testimonials = [
     {
-      quote: "Smart Power transformed our office into an energy-generating space. Incredible innovation!",
-      author: "Jane Doe, Sustainability Manager",
+      quote:
+        "The smart energy bricks transformed our campus walkways into power-generating infrastructure. Students love seeing the real-time energy data on the dashboard!",
+      author: "Dr. Maria Rodriguez, University Sustainability Director",
     },
     {
-      quote: "The real-time dashboard makes monitoring so easy. Highly recommend the complete kit.",
-      author: "John Smith, Tech Enthusiast",
+      quote:
+        "As an Arduino enthusiast, I'm impressed by the elegant integration of piezoelectric sensors with the TP4056 charging system. The code is well-documented and easy to customize.",
+      author: "James Chen, IoT Developer",
     },
     {
-      quote: "Eco-friendly and efficient. We've reduced our carbon footprint significantly.",
-      author: "Alex Johnson, Green Startup Founder",
+      quote:
+        "Finally, a solution that tackles both plastic waste and renewable energy. Our city plaza installation has diverted 2 tons of plastic waste while generating clean electricity.",
+      author: "Sarah Thompson, Environmental Engineer",
     },
   ];
 
@@ -174,11 +195,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <img
-                src={image}
-                alt="Smart Power Logo"
-                className="w-auto h-16"
-              />{" "}
+              <img src={image} alt="Smart Power Logo" className="w-auto h-16" />{" "}
               {/* Increased logo size for better visibility */}
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -217,7 +234,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 relative overflow-hidden">
         {/* Subtle leaf background pattern */}
-        <div className="absolute inset-0 bg-[url('/leaf-pattern.png')] bg-repeat opacity-5" /> {/* Assume a light leaf pattern image */}
+        <div className="absolute inset-0 bg-[url('/leaf-pattern.png')] bg-repeat opacity-5" />{" "}
+        {/* Assume a light leaf pattern image */}
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
@@ -229,17 +247,19 @@ export default function Home() {
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight animate-fade-in delay-100">
-                Power Your World,
+                Smart Energy-Generating
                 <span className="bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] bg-clip-text text-transparent">
                   {" "}
-                  One Step at a Time
+                  Bricks
                 </span>
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed animate-fade-in delay-200">
-                Innovative platform using piezoelectric sensors to generate
-                electricity from footsteps. Track data, buy components, and
-                contribute to sustainable energy.
+                Revolutionary eco-friendly bricks made from recycled plastic
+                that generate renewable electricity from footsteps and vehicle
+                pressure using embedded piezoelectric sensors. Real-time
+                monitoring, Arduino-powered systems, and sustainable urban
+                infrastructure.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in delay-300">
@@ -255,11 +275,12 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1440985465094-6ac443aab454?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                alt="Piezoelectric energy generation in action" 
+              <img
+                src="https://images.unsplash.com/photo-1440985465094-6ac443aab454?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Piezoelectric energy generation in action"
                 className="w-full rounded-3xl shadow-xl mb-8 animate-fade-in"
-              /> {/* Added hero image for visual appeal */}
+              />{" "}
+              {/* Added hero image for visual appeal */}
               <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-lg animate-fade-in delay-200">
                 <div className="grid grid-cols-2 gap-6">
                   {stats.map((stat, index) => (
@@ -273,7 +294,6 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-
               {/* Enhanced floating elements with more animation */}
               <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] rounded-full opacity-30 animate-pulse blur-md"></div>
               <div className="absolute -bottom-10 -left-10 w-20 h-20 bg-gradient-to-r from-[#E8BFBF] to-[#A55A5A] rounded-full opacity-20 animate-bounce blur-md"></div>
@@ -330,15 +350,15 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((step, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow animate-fade-in"
                 style={{ animationDelay: `${index * 200}ms` }}
               >
-                <div className="flex justify-center mb-4">
-                  {step.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-[#4A2E1E] mb-2">Step {step.step}: {step.title}</h3>
+                <div className="flex justify-center mb-4">{step.icon}</div>
+                <h3 className="text-2xl font-bold text-[#4A2E1E] mb-2">
+                  Step {step.step}: {step.title}
+                </h3>
                 <p className="text-gray-600">{step.description}</p>
               </div>
             ))}
@@ -374,22 +394,21 @@ export default function Home() {
                 )}
 
                 <div className="space-y-6">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
+                  <img
+                    src={product.image}
+                    alt={product.name}
                     className="w-full h-48 object-cover rounded-xl"
-                  /> {/* Added product images for visual appeal */}
+                  />{" "}
+                  {/* Added product images for visual appeal */}
                   <div>
                     <h3 className="text-2xl font-bold text-[#4A2E1E]">
                       {product.name}
                     </h3>
                     <p className="text-gray-600 mt-2">{product.description}</p>
                   </div>
-
                   <div className="text-3xl font-bold text-[#A55A5A]">
                     {product.price}
                   </div>
-
                   <ul className="space-y-3">
                     {product.features.map((feature, fIndex) => (
                       <li key={fIndex} className="flex items-center space-x-3">
@@ -398,7 +417,6 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-
                   <button
                     className={`w-full py-3 rounded-xl font-semibold transition-all text-white ${
                       product.popular
@@ -428,14 +446,18 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow animate-fade-in"
                 style={{ animationDelay: `${index * 200}ms` }}
               >
                 <Quote className="w-8 h-8 text-[#A55A5A] mb-4" />
-                <p className="text-gray-600 mb-4 italic">"{testimonial.quote}"</p>
-                <p className="text-[#4A2E1E] font-semibold">- {testimonial.author}</p>
+                <p className="text-gray-600 mb-4 italic">
+                  "{testimonial.quote}"
+                </p>
+                <p className="text-[#4A2E1E] font-semibold">
+                  - {testimonial.author}
+                </p>
               </div>
             ))}
           </div>
