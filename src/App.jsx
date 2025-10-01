@@ -1,10 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './components/Home';
-import Dashboard from './components/Dashboard';
-import Technology from './components/Technology';
-import Sustainability from './components/Sustainability';
-import Team from './components/Team';
-import Contact from './components/Contact';
+
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Home from "./components/Home";
+import Dashboard from "./components/Dashboard";
+import Technology from "./components/Technology";
+import Sustainability from "./components/Sustainability";
+import Team from "./components/Team";
+import Contact from "./components/Contact";
+
 // import './App.css';
 
 function App() {
@@ -19,18 +21,59 @@ function App() {
                 Smart Energy Bricks
               </div>
               <div className="hidden md:flex space-x-8">
-                <Link to="/" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Home</Link>
-                <Link to="/dashboard" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Live Dashboard</Link>
-                <Link to="/technology" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Technology Stack</Link>
-                <Link to="/sustainability" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Sustainability & Impact</Link>
-                <Link to="/team" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Team & Mentors</Link>
-                <Link to="/contact" className="text-gray-700 hover:text-green-600 font-medium transition-colors">Contact</Link>
+                <Link
+                  to="/"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Live Dashboard
+                </Link>
+                <Link
+                  to="/technology"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Technology Stack
+                </Link>
+                <Link
+                  to="/sustainability"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Sustainability & Impact
+                </Link>
+                <Link
+                  to="/team"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Team & Mentors
+                </Link>
+                <Link
+                  to="/contact"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Contact
+                </Link>
               </div>
               {/* Mobile menu button */}
               <div className="md:hidden">
                 <button className="text-gray-700 hover:text-green-600">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+
                   </svg>
                 </button>
               </div>
