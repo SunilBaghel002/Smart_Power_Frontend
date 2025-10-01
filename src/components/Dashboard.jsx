@@ -27,8 +27,8 @@ export default function Dashboard() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("24h");
   const [realTimeData, setRealTimeData] = useState({
     totalSteps: 0,
-    voltageProduced: 0.00,
-    energyRate: 0.00,
+    voltageProduced: 0.0,
+    energyRate: 0.0,
     efficiency: 94.2,
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -44,7 +44,7 @@ export default function Dashboard() {
         setRealTimeData((prev) => ({
           ...prev,
           totalSteps: prev.totalSteps + 1,
-          voltageProduced: 3+ Math.random()*1,
+          voltageProduced: 3 + Math.random() * 1,
           energyRate: 15 + Math.random() * 5, // Lower range: 15-20 kW/hour
           efficiency: 92 + Math.random() * 4,
         }));
@@ -64,92 +64,115 @@ export default function Dashboard() {
 
   const locations = [
     {
-      name: "New York Hub",
-      devices: 234,
+      name: "MIT Campus Plaza",
+      devices: 45,
       energy: 12847,
       status: "active",
       efficiency: 96.2,
+      brickCount: 45,
+      avgVoltage: 3.8,
     },
     {
-      name: "London Center",
-      devices: 189,
+      name: "Stanford University Walkway",
+      devices: 32,
       energy: 9634,
       status: "active",
       efficiency: 94.8,
+      brickCount: 32,
+      avgVoltage: 4.1,
     },
     {
-      name: "Tokyo Station",
-      devices: 156,
+      name: "Tokyo Tech Center",
+      devices: 28,
       energy: 7892,
       status: "maintenance",
       efficiency: 89.4,
+      brickCount: 28,
+      avgVoltage: 3.2,
     },
     {
-      name: "Berlin Campus",
-      devices: 203,
+      name: "Berlin Innovation Hub",
+      devices: 38,
       energy: 11234,
       status: "active",
       efficiency: 97.1,
+      brickCount: 38,
+      avgVoltage: 4.3,
     },
     {
-      name: "Sydney Grid",
-      devices: 178,
+      name: "Sydney University Square",
+      devices: 25,
       energy: 8456,
       status: "active",
       efficiency: 93.7,
+      brickCount: 25,
+      avgVoltage: 3.9,
     },
   ];
 
-  const blockchainData = [
+  const arduinoData = [
     {
-      block: "#47291",
+      deviceId: "ARD-MIT-001",
       timestamp: "2 min ago",
-      devices: 45,
+      bricks: 12,
+      voltage: 4.2,
       energy: 234.5,
-      hash: "a7f3...9c2d",
-      verified: true,
+      steps: 1847,
+      batteryLevel: 87,
+      temperature: 23.4,
     },
     {
-      block: "#47290",
+      deviceId: "ARD-STAN-045",
       timestamp: "5 min ago",
-      devices: 38,
+      bricks: 8,
+      voltage: 3.9,
       energy: 189.2,
-      hash: "c8e1...4a7b",
-      verified: true,
+      steps: 1234,
+      batteryLevel: 92,
+      temperature: 24.1,
     },
     {
-      block: "#47289",
+      deviceId: "ARD-TOK-078",
       timestamp: "8 min ago",
-      devices: 52,
+      bricks: 15,
+      voltage: 3.2,
       energy: 267.8,
-      hash: "f2d9...8e3c",
-      verified: true,
+      steps: 2134,
+      batteryLevel: 76,
+      temperature: 22.8,
     },
     {
-      block: "#47288",
+      deviceId: "ARD-BER-023",
       timestamp: "11 min ago",
-      devices: 41,
+      bricks: 10,
+      voltage: 4.3,
       energy: 201.3,
-      hash: "b5c7...6f2a",
-      verified: true,
+      steps: 1567,
+      batteryLevel: 89,
+      temperature: 21.9,
     },
   ];
 
   const recentAlerts = [
     {
       type: "warning",
-      message: "Tokyo Station efficiency below 90%",
+      message: "Tokyo Tech Center: Low battery level (76%) on ARD-TOK-078",
       time: "5 min ago",
     },
     {
       type: "success",
-      message: "Berlin Campus reached daily target",
+      message: "Berlin Innovation Hub: Daily energy target exceeded (150%)",
       time: "1 hour ago",
     },
     {
       type: "info",
-      message: "New device connected in Sydney Grid",
+      message: "New Arduino unit ARD-SYD-025 connected and calibrated",
       time: "2 hours ago",
+    },
+    {
+      type: "warning",
+      message: "High temperature detected on ARD-STAN-045 (28.5°C)",
+      time: "3 hours ago",
     },
   ];
 
@@ -165,9 +188,11 @@ export default function Dashboard() {
                   <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">Smart Power Dashboard</h1>
+                  <h1 className="text-xl font-bold">
+                    Smart Energy Bricks Dashboard
+                  </h1>
                   <p className="text-sm text-gray-400">
-                    Global Energy Monitoring
+                    Real-time Piezoelectric Energy Monitoring
                   </p>
                 </div>
               </div>
@@ -259,12 +284,12 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-400 text-sm font-medium">
-                  Energy Rate
+                  Battery Level
                 </p>
                 <p className="text-3xl font-bold">
-                  {realTimeData.energyRate.toFixed(1)}
+                  {Math.min(85 + Math.random() * 10, 95).toFixed(1)}
                 </p>
-                <p className="text-purple-400 text-sm">kW/hour</p>
+                <p className="text-purple-400 text-sm">%</p>
               </div>
               <div className="p-3 bg-purple-500/20 rounded-xl">
                 <Activity className="w-8 h-8 text-purple-400" />
@@ -409,7 +434,7 @@ export default function Dashboard() {
                       <div>
                         <h4 className="font-medium">{location.name}</h4>
                         <p className="text-sm text-gray-400">
-                          {location.devices} devices
+                          {location.brickCount} smart bricks
                         </p>
                       </div>
                     </div>
@@ -434,9 +459,9 @@ export default function Dashboard() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Efficiency</p>
-                      <p className="text-lg font-semibold">
-                        {location.efficiency}%
+                      <p className="text-sm text-gray-400">Avg Voltage</p>
+                      <p className="text-lg font-semibold text-blue-400">
+                        {location.avgVoltage}V
                       </p>
                     </div>
                   </div>
@@ -454,47 +479,68 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Blockchain Verification */}
+          {/* Arduino System Status */}
           <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold">Blockchain Ledger</h3>
+              <h3 className="text-xl font-semibold">Arduino System Status</h3>
               <div className="flex items-center space-x-2 text-green-400">
-                <Shield className="w-5 h-5" />
-                <span className="text-sm">100% Verified</span>
+                <Cpu className="w-5 h-5" />
+                <span className="text-sm">All Systems Online</span>
               </div>
             </div>
 
             <div className="space-y-4">
-              {blockchainData.map((block, index) => (
+              {arduinoData.map((device, index) => (
                 <div key={index} className="bg-black/20 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span className="font-mono text-sm">{block.block}</span>
+                      <span className="font-mono text-sm">
+                        {device.deviceId}
+                      </span>
                     </div>
                     <span className="text-xs text-gray-400">
-                      {block.timestamp}
+                      {device.timestamp}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 mb-2">
+                  <div className="grid grid-cols-3 gap-3 mb-3">
                     <div>
-                      <p className="text-xs text-gray-400">Devices</p>
-                      <p className="text-sm font-medium">{block.devices}</p>
+                      <p className="text-xs text-gray-400">Smart Bricks</p>
+                      <p className="text-sm font-medium">{device.bricks}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400">Energy</p>
-                      <p className="text-sm font-medium">{block.energy} kWh</p>
+                      <p className="text-xs text-gray-400">Voltage (V)</p>
+                      <p className="text-sm font-medium text-blue-400">
+                        {device.voltage}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Steps</p>
+                      <p className="text-sm font-medium">{device.steps}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-gray-400">
-                      {block.hash}
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                      <span className="text-xs text-green-400">Verified</span>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400">Battery</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 bg-gray-600 rounded-full h-2">
+                          <div
+                            className="bg-green-400 h-2 rounded-full"
+                            style={{ width: `${device.batteryLevel}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-green-400">
+                          {device.batteryLevel}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-400">Temp: </span>
+                      <span className="text-xs font-medium">
+                        {device.temperature}°C
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -502,7 +548,7 @@ export default function Dashboard() {
             </div>
 
             <button className="w-full mt-4 py-2 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-lg hover:from-green-500/30 hover:to-blue-500/30 transition-all">
-              View Full Blockchain Explorer
+              View Arduino Code & Setup Guide
             </button>
           </div>
         </div>
