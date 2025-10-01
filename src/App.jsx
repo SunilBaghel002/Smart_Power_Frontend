@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
@@ -5,6 +6,7 @@ import Technology from "./components/Technology";
 import Sustainability from "./components/Sustainability";
 import Team from "./components/Team";
 import Contact from "./components/Contact";
+
 // import './App.css';
 
 function App() {
@@ -71,6 +73,7 @@ function App() {
                       strokeWidth={2}
                       d="M4 6h16M4 12h16M4 18h16"
                     />
+
                   </svg>
                 </button>
               </div>
