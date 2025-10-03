@@ -11,7 +11,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "lucide-react": "^0.544.0",
+    "mongoose": "^8.19.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1",

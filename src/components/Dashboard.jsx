@@ -1,3 +1,4 @@
+// Updated Frontend: Dashboard.jsx (React with API calls)
 import React, { useState, useEffect } from "react";
 import {
   Zap,
@@ -23,44 +24,114 @@ import {
   Bell,
 } from "lucide-react";
 
+const API_BASE = "http://localhost:5000/api";
+
 export default function Dashboard() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("24h");
   const [realTimeData, setRealTimeData] = useState({
     totalSteps: 0,
     voltageProduced: 0.0,
     energyRate: 0.0,
-    efficiency: 94.2,
+    efficiency: 0.0,
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showSecretModal, setShowSecretModal] = useState(false);
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Gradual increase for totalSteps and voltageProduced after 10 seconds
+  // Fetch data from backend
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/data`);
+      const data = await response.json();
+      setRealTimeData(data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Poll for updates every 3 seconds (after initial load)
   useEffect(() => {
-    let timeout;
-    let interval;
+    fetchData(); // Initial fetch
 
-    // Start after 10 seconds
-    timeout = setTimeout(() => {
-      interval = setInterval(() => {
-        setRealTimeData((prev) => ({
-          ...prev,
-          totalSteps: prev.totalSteps + 1,
-          voltageProduced: 3 + Math.random() * 1,
-          energyRate: 15 + Math.random() * 5, // Lower range: 15-20 kW/hour
-          efficiency: 92 + Math.random() * 4,
-        }));
-      }, 3000); // Update every 2 seconds
-    }, 20000); // 10-second delay
+    const interval = setInterval(() => {
+      fetchData();
+    }, 3000);
 
+    return () => clearInterval(interval);
+  }, []);
+
+  // Keyboard event listener for Shift + B
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.shiftKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setShowSecretModal(true);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_BASE}/increment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: enteredPassword }),
+      });
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setShowSecretModal(false);
+        setEnteredPassword("");
+        fetchData(); // Refresh data
+      } else {
+        alert("Incorrect password!");
+        setEnteredPassword("");
+      }
+    } catch (err) {
+      alert("Error authenticating!");
+      setEnteredPassword("");
+    }
+  };
+
+  const handleIncrement = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/increment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: "Satyam121" }), // Password sent each time for simplicity
+      });
+      if (response.ok) {
+        fetchData(); // Refresh data
+      } else {
+        alert("Authentication failed!");
+      }
+    } catch (err) {
+      console.error("Error incrementing:", err);
+    }
+  };
+
   const handleRefresh = () => {
     setIsRefreshing(true);
+    fetchData();
     setTimeout(() => setIsRefreshing(false), 1000);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 flex items-center justify-center">
+        <div className="animate-spin">Loading...</div>
+      </div>
+    );
+  }
 
   const locations = [
     {
@@ -175,6 +246,69 @@ export default function Dashboard() {
       time: "3 hours ago",
     },
   ];
+
+  // Secret Modal
+  const renderSecretModal = () => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 w-80">
+        <h3 className="text-xl font-semibold mb-4 text-white">
+          Enter Password
+        </h3>
+        <form onSubmit={handlePasswordSubmit}>
+          <input
+            type="password"
+            value={enteredPassword}
+            onChange={(e) => setEnteredPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 mb-4"
+            required
+          />
+          <div className="flex space-x-3">
+            <button
+              type="submit"
+              className="flex-1 py-2 bg-green-500/20 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-all text-white"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowSecretModal(false);
+                setEnteredPassword("");
+              }}
+              className="flex-1 py-2 bg-red-500/20 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-all text-white"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  // Secret Increment Tool (after authentication)
+  const renderSecretTool = () => (
+    <div className="fixed bottom-6 right-6 z-40">
+      <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 backdrop-blur-lg rounded-2xl p-4 border border-purple-500/30">
+        <h4 className="text-sm font-semibold mb-2 text-purple-300">
+          Secret Increment Tool
+        </h4>
+        <p className="text-xs text-purple-400 mb-3">Authenticated Access</p>
+        <button
+          onClick={handleIncrement}
+          className="w-full py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg text-white font-medium hover:from-green-600 hover:to-blue-600 transition-all"
+        >
+          Increment Parameters
+        </button>
+        <button
+          onClick={() => setIsAuthenticated(false)}
+          className="w-full mt-2 py-1 text-xs text-red-400 hover:text-red-300 transition-all"
+        >
+          Close Tool
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 text-white">
@@ -605,6 +739,10 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Conditional renders for secret features */}
+      {showSecretModal && renderSecretModal()}
+      {isAuthenticated && renderSecretTool()}
     </div>
   );
 }
