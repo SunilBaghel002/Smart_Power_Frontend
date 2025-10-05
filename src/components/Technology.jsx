@@ -52,7 +52,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80",
-      price: "$29.99",
+      price: "₹144",
     },
     {
       id: "arduino",
@@ -75,7 +75,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1553406830-c143465ac264?w=500&q=80",
-      price: "$24.99",
+      price: "₹250",
     },
     {
       id: "tp4056",
@@ -98,7 +98,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1601972599720-a4c3b54be471?w=500&q=80",
-      price: "$3.99",
+      price: "₹9",
     },
     {
       id: "lcd",
@@ -121,7 +121,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&q=80",
-      price: "$8.99",
+      price: "₹350",
     },
     {
       id: "battery",
@@ -144,7 +144,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1609592106311-d5ecd1b9fb1b?w=500&q=80",
-      price: "$15.99",
+      price: "₹130",
     },
     {
       id: "esp8266",
@@ -167,7 +167,7 @@ export default function Technology() {
       ],
       image:
         "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=500&q=80",
-      price: "$6.99",
+      price: "₹400",
     },
   ];
 
