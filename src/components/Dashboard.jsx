@@ -1,4 +1,3 @@
-// Updated Frontend: Dashboard.jsx (React with API calls)
 import React, { useState, useEffect } from "react";
 import {
   Zap,
@@ -38,7 +37,9 @@ export default function Dashboard() {
   const [showSecretModal, setShowSecretModal] = useState(false);
   const [enteredPassword, setEnteredPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [storedPassword, setStoredPassword] = useState(""); // Store verified password
   const [loading, setLoading] = useState(true);
+  const [chartMetric, setChartMetric] = useState("steps"); // State for chart metric (steps or voltage)
 
   // Fetch data from backend
   const fetchData = async () => {
@@ -89,6 +90,7 @@ export default function Dashboard() {
       });
       if (response.ok) {
         setIsAuthenticated(true);
+        setStoredPassword(enteredPassword); // Store verified password
         setShowSecretModal(false);
         setEnteredPassword("");
         fetchData(); // Refresh data
@@ -103,19 +105,27 @@ export default function Dashboard() {
   };
 
   const handleIncrement = async () => {
+    if (!isAuthenticated) {
+      alert("Please authenticate first!");
+      setShowSecretModal(true);
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE}/increment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: "Satyam121" }), // Password sent each time for simplicity
+        body: JSON.stringify({ password: storedPassword }), // Send stored password
       });
       if (response.ok) {
         fetchData(); // Refresh data
       } else {
-        alert("Authentication failed!");
+        alert("Authentication failed or action not permitted!");
+        setIsAuthenticated(false);
+        setStoredPassword(""); // Clear stored password
       }
     } catch (err) {
       console.error("Error incrementing:", err);
+      alert("Error performing increment action!");
     }
   };
 
@@ -301,7 +311,10 @@ export default function Dashboard() {
           Increment Parameters
         </button>
         <button
-          onClick={() => setIsAuthenticated(false)}
+          onClick={() => {
+            setIsAuthenticated(false);
+            setStoredPassword(""); // Clear stored password
+          }}
           className="w-full mt-2 py-1 text-xs text-red-400 hover:text-red-300 transition-all"
         >
           Close Tool
@@ -309,6 +322,17 @@ export default function Dashboard() {
       </div>
     </div>
   );
+
+  // Normalize data for chart (scale to 40px - 200px)
+  const normalizeHeight = (value, maxValue) => {
+    const minHeight = 40;
+    const maxHeight = 200;
+    return (value / maxValue) * (maxHeight - minHeight) + minHeight;
+  };
+
+  // Get max value for normalization
+  const maxSteps = Math.max(...arduinoData.map((device) => device.steps));
+  const maxVoltage = Math.max(...arduinoData.map((device) => device.voltage));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 text-white">
@@ -467,6 +491,15 @@ export default function Dashboard() {
               </h3>
               <div className="flex items-center space-x-2">
                 <select
+                  value={chartMetric}
+                  onChange={(e) => setChartMetric(e.target.value)}
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-sm"
+                  aria-label="Select metric for energy production trends"
+                >
+                  <option value="steps">Steps</option>
+                  <option value="voltage">Voltage</option>
+                </select>
+                <select
                   value={selectedTimeRange}
                   onChange={(e) => setSelectedTimeRange(e.target.value)}
                   className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-sm"
@@ -479,17 +512,32 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Simulated Chart */}
+            {/* Chart based on arduinoData */}
             <div className="h-64 bg-black/20 rounded-xl p-4 flex items-end justify-around">
-              {Array.from({ length: 12 }, (_, i) => (
-                <div key={i} className="flex flex-col items-center space-y-2">
+              {arduinoData.map((device, index) => {
+                const value =
+                  chartMetric === "steps" ? device.steps : device.voltage;
+                const maxValue =
+                  chartMetric === "steps" ? maxSteps : maxVoltage;
+                const height = normalizeHeight(value, maxValue);
+                return (
                   <div
-                    className="bg-gradient-to-t from-green-500 to-green-400 rounded-t w-6"
-                    style={{ height: `${Math.random() * 160 + 40}px` }}
-                  ></div>
-                  <span className="text-xs text-gray-400">{i + 1}</span>
-                </div>
-              ))}
+                    key={index}
+                    className="flex flex-col items-center space-y-2"
+                  >
+                    <div
+                      className="bg-gradient-to-t from-green-500 to-green-400 rounded-t w-12"
+                      style={{ height: `${height}px` }}
+                      title={`${device.deviceId}: ${value.toFixed(2)} ${
+                        chartMetric === "steps" ? "steps" : "V"
+                      }`}
+                    ></div>
+                    <span className="text-xs text-gray-400">
+                      {device.deviceId}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -707,11 +755,9 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Simplified world map representation */}
           <div className="h-64 bg-black/20 rounded-xl p-8 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-green-900/20"></div>
 
-            {/* Simulated location markers */}
             <div className="relative h-full flex items-center justify-center">
               <div className="text-center space-y-4">
                 <Globe className="w-16 h-16 text-blue-400 mx-auto animate-pulse" />
@@ -724,7 +770,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Floating stats */}
             <div className="absolute top-4 left-4 bg-black/40 rounded-lg p-3">
               <p className="text-sm text-gray-400">Total Locations</p>
               <p className="text-xl font-bold text-green-400">
@@ -740,7 +785,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Conditional renders for secret features */}
       {showSecretModal && renderSecretModal()}
       {isAuthenticated && renderSecretTool()}
     </div>
