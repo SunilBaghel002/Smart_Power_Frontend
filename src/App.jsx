@@ -83,11 +83,11 @@ function App() {
         {/* Routes */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/technology" element={<Technology />} />
           <Route path="/sustainability" element={<Sustainability />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<Contact />} /> */}
         </Routes>
       </div>
     </Router>
