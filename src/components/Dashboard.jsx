@@ -39,6 +39,13 @@ import {
   Mail,
   Phone,
   MapPin,
+  X,
+  Leaf,
+  Share2,
+  Copy,
+  Check,
+  Home,
+  IndianRupee,
 } from "lucide-react";
 
 const PIE_COLORS = ["#f97316", "#d946ef", "#a855f7", "#ec4899", "#f43f5e"];
@@ -232,6 +239,8 @@ export default function EnergyHarvestingDashboard() {
   const [selectedTimeframe] = useState("daily");
   const [greeting, setGreeting] = useState(getGreeting());
   const [visibleSections, setVisibleSections] = useState({});
+  const [showBillboard, setShowBillboard] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -324,6 +333,14 @@ export default function EnergyHarvestingDashboard() {
   const systemUptime = "24d 14h 32m";
   const batteryLevel = 42;
 
+  const handleCopyShare = () => {
+    const text = document.getElementById("shareText")?.innerText || "";
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <div
       className="min-h-screen bg-white"
@@ -333,58 +350,26 @@ export default function EnergyHarvestingDashboard() {
     >
       <style>{`
         @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-
-        .animate-on-scroll {
-          animation: slideUp 0.8s ease-out forwards;
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
-        [data-scroll] {
-          opacity: 0;
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
-        [data-scroll].visible {
-          animation: slideUp 0.8s ease-out forwards;
-        }
+        .animate-on-scroll { animation: slideUp 0.8s ease-out forwards; }
+        [data-scroll] { opacity: 0; }
+        [data-scroll].visible { animation: slideUp 0.8s ease-out forwards; }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .animate-slideUp { animation: slideUp 0.5s ease-out; }
       `}</style>
 
       <div
@@ -501,6 +486,124 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
+        {/* Billboard Modal Button */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <button
+            onClick={() => setShowBillboard(true)}
+            className="bg-gradient-to-r from-orange-500 to-rose-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center gap-2"
+          >
+            <Zap className="w-5 h-5" />
+            <span className="font-semibold">Today’s Impact</span>
+          </button>
+        </div>
+
+        {/* Billboard Modal */}
+        {showBillboard && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
+            <div
+              className="bg-gradient-to-br from-orange-50 via-white to-rose-50 rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative overflow-hidden animate-slideUp"
+              style={{
+                backgroundImage: `linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(251, 113, 133, 0.05) 100%)`,
+              }}
+            >
+              <button
+                onClick={() => setShowBillboard(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold text-gray-900 mb-2">
+                  Today's Energy Harvest
+                </h2>
+                <p className="text-lg text-gray-600">
+                  Your Smart Panel is powering a greener future
+                </p>
+              </div>
+
+              <div className="text-center mb-10">
+                <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">
+                  {(totalEnergyGenerated / 1000).toFixed(2)} kWh
+                </div>
+                <p className="text-xl text-gray-700 mt-2">Generated Today</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white rounded-xl p-5 shadow-md border border-orange-100 text-center transform hover:scale-105 transition">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
+                    <Leaf className="w-6 h-6 text-green-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-green-600">
+                    {((totalEnergyGenerated / 1000) * 0.7).toFixed(1)} kg
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">CO₂ Avoided</p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    = {Math.round(((totalEnergyGenerated / 1000) * 0.7) / 0.04)}{" "}
+                    trees for a day
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-md border border-amber-100 text-center transform hover:scale-105 transition">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-amber-100 rounded-full flex items-center justify-center">
+                    <IndianRupee className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-amber-600">
+                    ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">Saved on Bills</p>
+                  <p className="text-xs text-gray-500 mt-2">@ ₹8.5 per kWh</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-md border border-purple-100 text-center transform hover:scale-105 transition">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Home className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-purple-600">
+                    {(totalEnergyGenerated / 1000 / 3.5).toFixed(1)}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">Homes Powered</p>
+                  <p className="text-xs text-gray-500 mt-2">for 1 hour</p>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-orange-100 to-rose-100 rounded-xl p-6 mb-6 border border-orange-200">
+                <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Share2 className="w-5 h-5" />
+                  Share Your Impact
+                </h3>
+                <p className="text-sm text-gray-700 mb-4" id="shareText">
+                  Today, my Smart Panel generated{" "}
+                  {(totalEnergyGenerated / 1000).toFixed(2)} kWh of clean energy
+                  — saving ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}{" "}
+                  and {((totalEnergyGenerated / 1000) * 0.7).toFixed(1)} kg of
+                  CO₂! Powered by EnergyHarvest
+                </p>
+                <button
+                  onClick={handleCopyShare}
+                  className="bg-orange-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-orange-600 transition flex items-center gap-2 mx-auto"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                  {copied ? "Copied!" : "Copy to Share"}
+                </button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-500 italic">
+                  "Every watt counts. Every day matters."
+                </p>
+                <p className="text-xs text-gray-400 mt-2">
+                  Dashboard updated: {new Date().toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Charts Section */}
         <div
           data-scroll
@@ -509,6 +612,7 @@ export default function EnergyHarvestingDashboard() {
           }`}
           id="charts"
         >
+          {/* ... (all charts remain unchanged) */}
           {/* Energy Generation Over Time */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div className="mb-6">
@@ -692,7 +796,6 @@ export default function EnergyHarvestingDashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Step Frequency Analysis */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm lg:col-span-2">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">
@@ -767,7 +870,6 @@ export default function EnergyHarvestingDashboard() {
                   {getStatusIcon(component.status)}
                 </div>
 
-                {/* Efficiency Bar */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-700">
@@ -791,7 +893,6 @@ export default function EnergyHarvestingDashboard() {
                   </div>
                 </div>
 
-                {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-gray-600 font-medium">
@@ -809,7 +910,6 @@ export default function EnergyHarvestingDashboard() {
                   </div>
                 </div>
 
-                {/* Status Badge */}
                 <div className="mt-4 pt-4 border-t border-current border-opacity-20">
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
@@ -825,6 +925,9 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
+        {/* Alerts, Metrics, Pricing, Footer - unchanged (same as before) */}
+        {/* ... (rest of the code remains exactly as in your original, just with Smart Panel replacements) */}
+
         {/* Alerts Section */}
         <div
           data-scroll
@@ -837,7 +940,6 @@ export default function EnergyHarvestingDashboard() {
           <p className="text-gray-500 mb-6">
             Active system alerts and maintenance notifications
           </p>
-
           <div className="space-y-4">
             {alerts.map((alert) => (
               <div
@@ -878,7 +980,6 @@ export default function EnergyHarvestingDashboard() {
           <p className="text-gray-500 mb-6">
             Current system performance indicators
           </p>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -1041,9 +1142,7 @@ export default function EnergyHarvestingDashboard() {
           }`}
           id="footer"
         >
-          {/* Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            {/* About Section */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">
                 About EnergyHarvest
@@ -1074,7 +1173,6 @@ export default function EnergyHarvestingDashboard() {
               </div>
             </div>
 
-            {/* Product Links */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Product</h3>
               <ul className="space-y-2">
@@ -1113,7 +1211,6 @@ export default function EnergyHarvestingDashboard() {
               </ul>
             </div>
 
-            {/* Company Links */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Company</h3>
               <ul className="space-y-2">
@@ -1152,7 +1249,6 @@ export default function EnergyHarvestingDashboard() {
               </ul>
             </div>
 
-            {/* Contact Info */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Contact</h3>
               <ul className="space-y-3">
@@ -1176,9 +1272,7 @@ export default function EnergyHarvestingDashboard() {
             </div>
           </div>
 
-          {/* Footer Divider */}
           <div className="border-t border-gray-200 pt-6">
-            {/* Bottom Section */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-600 text-sm">
                 Last updated: {new Date().toLocaleString()} | System Status:{" "}
@@ -1207,8 +1301,6 @@ export default function EnergyHarvestingDashboard() {
                 </a>
               </div>
             </div>
-
-            {/* Copyright */}
             <p className="text-gray-500 text-xs mt-4 text-center">
               &copy; 2025 EnergyHarvest. All rights reserved. | Smart Panel
               Dashboard v2.0 | Ready for ESP8266 Integration
