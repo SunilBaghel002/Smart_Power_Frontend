@@ -50,7 +50,7 @@ import {
 
 const PIE_COLORS = ["#f97316", "#d946ef", "#a855f7", "#ec4899", "#f43f5e"];
 
-// Static energy data - no random updates
+// Static energy data
 const energyData = [
   { time: "0:00", energy: 245, power: 65 },
   { time: "1:00", energy: 312, power: 78 },
@@ -213,30 +213,29 @@ const getGreeting = () => {
   if (hour < 12)
     return {
       text: "Good Morning",
-      emoji: "Morning",
+      emoji: "Sunrise",
       color: "from-amber-500 to-orange-500",
     };
   if (hour < 17)
     return {
       text: "Good Afternoon",
-      emoji: "Afternoon",
+      emoji: "Sun",
       color: "from-orange-500 to-rose-500",
     };
   if (hour < 21)
     return {
       text: "Good Evening",
-      emoji: "Evening",
+      emoji: "Sunset",
       color: "from-purple-500 to-pink-500",
     };
   return {
     text: "Good Night",
-    emoji: "Night",
+    emoji: "Moon",
     color: "from-indigo-500 to-purple-500",
   };
 };
 
 export default function EnergyHarvestingDashboard() {
-  const [selectedTimeframe] = useState("daily");
   const [greeting, setGreeting] = useState(getGreeting());
   const [visibleSections, setVisibleSections] = useState({});
   const [showBillboard, setShowBillboard] = useState(false);
@@ -264,13 +263,14 @@ export default function EnergyHarvestingDashboard() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setGreeting(getGreeting());
-    }, 5 * 60 * 1000);
+    const interval = setInterval(
+      () => setGreeting(getGreeting()),
+      5 * 60 * 1000
+    );
     return () => clearInterval(interval);
   }, []);
 
-  const [alerts] = useState([
+  const alerts = [
     {
       id: 1,
       type: "warning",
@@ -283,7 +283,7 @@ export default function EnergyHarvestingDashboard() {
       message: "Voltage regulator efficiency dropped to 85%",
       component: "AMS1117 Regulator",
     },
-  ]);
+  ];
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -349,22 +349,8 @@ export default function EnergyHarvestingDashboard() {
       }}
     >
       <style>{`
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideInLeft {
-          from { opacity: 0; transform: translateX(-30px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(30px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .animate-on-scroll { animation: slideUp 0.8s ease-out forwards; }
         [data-scroll] { opacity: 0; }
         [data-scroll].visible { animation: slideUp 0.8s ease-out forwards; }
@@ -372,6 +358,7 @@ export default function EnergyHarvestingDashboard() {
         .animate-slideUp { animation: slideUp 0.5s ease-out; }
       `}</style>
 
+      {/* Header */}
       <div
         className={`bg-gradient-to-r ${greeting.color} text-white px-6 lg:px-12 py-12`}
       >
@@ -400,7 +387,6 @@ export default function EnergyHarvestingDashboard() {
           }`}
           id="kpi"
         >
-          {/* Total Energy Generated */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -416,7 +402,6 @@ export default function EnergyHarvestingDashboard() {
             <p className="text-gray-500 text-xs">+12.5% from yesterday</p>
           </div>
 
-          {/* Average Power */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -432,7 +417,6 @@ export default function EnergyHarvestingDashboard() {
             <p className="text-gray-500 text-xs">Current 24hr average</p>
           </div>
 
-          {/* Peak Voltage */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -448,7 +432,6 @@ export default function EnergyHarvestingDashboard() {
             <p className="text-gray-500 text-xs">Maximum recorded today</p>
           </div>
 
-          {/* Battery Level */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -469,7 +452,6 @@ export default function EnergyHarvestingDashboard() {
             </div>
           </div>
 
-          {/* System Uptime */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -486,7 +468,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Billboard Modal Button */}
+        {/* Floating Billboard Button */}
         <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setShowBillboard(true)}
@@ -497,18 +479,13 @@ export default function EnergyHarvestingDashboard() {
           </button>
         </div>
 
-        {/* Billboard Modal */}
+        {/* BILLBOARD MODAL - WHITE BACKGROUND */}
         {showBillboard && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div
-              className="bg-gradient-to-br from-orange-50 via-white to-rose-50 rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative overflow-hidden animate-slideUp"
-              style={{
-                backgroundImage: `linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(251, 113, 133, 0.05) 100%)`,
-              }}
-            >
+            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative overflow-hidden animate-slideUp border border-gray-200">
               <button
                 onClick={() => setShowBillboard(false)}
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -530,49 +507,52 @@ export default function EnergyHarvestingDashboard() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white rounded-xl p-5 shadow-md border border-orange-100 text-center transform hover:scale-105 transition">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-sm border border-green-100 text-center hover:shadow-md transition">
                   <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
                     <Leaf className="w-6 h-6 text-green-600" />
                   </div>
-                  <p className="text-3xl font-bold text-green-600">
+                  <p className="text-3xl font-bold text-green-700">
                     {((totalEnergyGenerated / 1000) * 0.7).toFixed(1)} kg
                   </p>
-                  <p className="text-sm text-gray-600 mt-1">CO₂ Avoided</p>
+                  <p className="text-sm text-gray-700 mt-1">CO₂ Avoided</p>
                   <p className="text-xs text-gray-500 mt-2">
                     = {Math.round(((totalEnergyGenerated / 1000) * 0.7) / 0.04)}{" "}
-                    trees for a day
+                    trees
                   </p>
                 </div>
 
-                <div className="bg-white rounded-xl p-5 shadow-md border border-amber-100 text-center transform hover:scale-105 transition">
+                <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-5 shadow-sm border border-amber-100 text-center hover:shadow-md transition">
                   <div className="w-12 h-12 mx-auto mb-3 bg-amber-100 rounded-full flex items-center justify-center">
                     <IndianRupee className="w-6 h-6 text-amber-600" />
                   </div>
-                  <p className="text-3xl font-bold text-amber-600">
+                  <p className="text-3xl font-bold text-amber-700">
                     ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}
                   </p>
-                  <p className="text-sm text-gray-600 mt-1">Saved on Bills</p>
-                  <p className="text-xs text-gray-500 mt-2">@ ₹8.5 per kWh</p>
+                  <p className="text-sm text-gray-700 mt-1">Saved on Bills</p>
+                  <p className="text-xs text-gray-500 mt-2">@ ₹8.5/kWh</p>
                 </div>
 
-                <div className="bg-white rounded-xl p-5 shadow-md border border-purple-100 text-center transform hover:scale-105 transition">
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 shadow-sm border border-purple-100 text-center hover:shadow-md transition">
                   <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
                     <Home className="w-6 h-6 text-purple-600" />
                   </div>
-                  <p className="text-3xl font-bold text-purple-600">
+                  <p className="text-3xl font-bold text-purple-700">
                     {(totalEnergyGenerated / 1000 / 3.5).toFixed(1)}
                   </p>
-                  <p className="text-sm text-gray-600 mt-1">Homes Powered</p>
+                  <p className="text-sm text-gray-700 mt-1">Homes Powered</p>
                   <p className="text-xs text-gray-500 mt-2">for 1 hour</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-orange-100 to-rose-100 rounded-xl p-6 mb-6 border border-orange-200">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-5 h-5 text-orange-600" />
                   Share Your Impact
                 </h3>
-                <p className="text-sm text-gray-700 mb-4" id="shareText">
+                <p
+                  className="text-sm text-gray-700 mb-4 leading-relaxed"
+                  id="shareText"
+                >
                   Today, my Smart Panel generated{" "}
                   {(totalEnergyGenerated / 1000).toFixed(2)} kWh of clean energy
                   — saving ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}{" "}
@@ -592,7 +572,7 @@ export default function EnergyHarvestingDashboard() {
                 </button>
               </div>
 
-              <div className="text-center">
+              <div className="text-center mt-8">
                 <p className="text-sm text-gray-500 italic">
                   "Every watt counts. Every day matters."
                 </p>
@@ -612,7 +592,6 @@ export default function EnergyHarvestingDashboard() {
           }`}
           id="charts"
         >
-          {/* ... (all charts remain unchanged) */}
           {/* Energy Generation Over Time */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div className="mb-6">
@@ -729,6 +708,7 @@ export default function EnergyHarvestingDashboard() {
             </ResponsiveContainer>
           </div>
 
+          {/* Energy Source Distribution */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">
@@ -750,15 +730,19 @@ export default function EnergyHarvestingDashboard() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  <Cell fill="#f97316" />
-                  <Cell fill="#d946ef" />
-                  <Cell fill="#a855f7" />
+                  {pieData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={PIE_COLORS[index % PIE_COLORS.length]}
+                    />
+                  ))}
                 </Pie>
                 <Tooltip formatter={(value) => `${value}%`} />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
+          {/* Component Durability */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">
@@ -796,6 +780,7 @@ export default function EnergyHarvestingDashboard() {
             </ResponsiveContainer>
           </div>
 
+          {/* Step Frequency */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm lg:col-span-2">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">
@@ -837,7 +822,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Component Status Section */}
+        {/* Component Status */}
         <div
           data-scroll
           className={`mb-12 ${visibleSections["components"] ? "visible" : ""}`}
@@ -925,10 +910,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Alerts, Metrics, Pricing, Footer - unchanged (same as before) */}
-        {/* ... (rest of the code remains exactly as in your original, just with Smart Panel replacements) */}
-
-        {/* Alerts Section */}
+        {/* Alerts */}
         <div
           data-scroll
           className={`mb-12 ${visibleSections["alerts"] ? "visible" : ""}`}
@@ -1051,7 +1033,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Pricing Section */}
+        {/* Pricing */}
         <div
           data-scroll
           className={`mb-12 ${visibleSections["pricing"] ? "visible" : ""}`}
