@@ -1,10 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./components/Home";
-import Dashboard from "./components/Dashboard";
-import Technology from "./components/Technology";
-import Sustainability from "./components/Sustainability";
-import Team from "./components/Team";
-import Contact from "./components/Contact";
+import EnergyHarvestingDashboard from './components/Dashboard'
 
 // import './App.css';
 
@@ -82,7 +77,7 @@ function App() {
 
         {/* Routes */}
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<EnergyHarvestingDashboard />} />
           {/* <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/technology" element={<Technology />} />
           <Route path="/sustainability" element={<Sustainability />} />
