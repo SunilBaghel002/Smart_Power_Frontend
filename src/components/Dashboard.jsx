@@ -142,19 +142,19 @@ const componentStatus = [
 ];
 
 const pieData = [
-  { name: "Solar Contribution", value: 35 },
+  { name: "Smart Panel Contribution", value: 35 },
   { name: "Piezoelectric Contribution", value: 45 },
   { name: "Other Sources", value: 20 },
 ];
 
 const pricingPlans = [
   {
-    name: "Starter Panel",
+    name: "Starter Smart Panel",
     price: "₹2,700",
     area: "10 m²",
     period: "month",
     specs: [
-      "Solar Panel 10 m²",
+      "Smart Panel 10 m²",
       "Up to 1 device",
       "Basic monitoring",
       "Email support",
@@ -162,12 +162,12 @@ const pricingPlans = [
     cta: "Get Started",
   },
   {
-    name: "Professional Panel",
+    name: "Professional Smart Panel",
     price: "₹7,900",
     area: "25 m²",
     period: "month",
     specs: [
-      "Solar Panel 25 m²",
+      "Smart Panel 25 m²",
       "Up to 5 devices",
       "Advanced analytics",
       "Priority support",
@@ -177,12 +177,12 @@ const pricingPlans = [
     cta: "Start Free Trial",
   },
   {
-    name: "Enterprise Solution",
+    name: "Enterprise Smart Solution",
     price: "Custom",
     area: "50+ m²",
     period: "pricing",
     specs: [
-      "Custom solar arrays",
+      "Custom smart arrays",
       "Unlimited devices",
       "Custom integrations",
       "Dedicated support",
@@ -206,24 +206,24 @@ const getGreeting = () => {
   if (hour < 12)
     return {
       text: "Good Morning",
-      emoji: "🌅",
+      emoji: "Morning",
       color: "from-amber-500 to-orange-500",
     };
   if (hour < 17)
     return {
       text: "Good Afternoon",
-      emoji: "☀️",
+      emoji: "Afternoon",
       color: "from-orange-500 to-rose-500",
     };
   if (hour < 21)
     return {
       text: "Good Evening",
-      emoji: "🌆",
+      emoji: "Evening",
       color: "from-purple-500 to-pink-500",
     };
   return {
     text: "Good Night",
-    emoji: "🌙",
+    emoji: "Night",
     color: "from-indigo-500 to-purple-500",
   };
 };
@@ -396,12 +396,11 @@ export default function EnergyHarvestingDashboard() {
               {greeting.emoji} {greeting.text}!
             </p>
             <h1 className="text-4xl lg:text-5xl font-bold">
-              Energy Harvesting Dashboard
+              Smart Panel Energy Dashboard
             </h1>
           </div>
           <p className="text-white/90 text-lg">
-            Real-time monitoring and analytics for piezoelectric energy
-            generation
+            Real-time monitoring and analytics for smart energy harvesting
           </p>
         </div>
       </div>
@@ -959,10 +958,10 @@ export default function EnergyHarvestingDashboard() {
         >
           <div className="mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Upgrade Your System
+              Upgrade Your Smart Panel
             </h2>
             <p className="text-gray-500">
-              Choose the perfect solar panel plan for your energy harvesting
+              Choose the perfect smart panel plan for your energy harvesting
               needs
             </p>
           </div>
@@ -1050,8 +1049,8 @@ export default function EnergyHarvestingDashboard() {
                 About EnergyHarvest
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Leading provider of piezoelectric energy harvesting solutions
-                for sustainable power generation.
+                Leading provider of smart panel energy harvesting solutions for
+                sustainable power generation.
               </p>
               <div className="flex gap-4 mt-4">
                 <a
@@ -1084,7 +1083,7 @@ export default function EnergyHarvestingDashboard() {
                     href="#"
                     className="text-gray-600 hover:text-orange-500 transition text-sm"
                   >
-                    Solar Panels
+                    Smart Panels
                   </a>
                 </li>
                 <li>
@@ -1211,8 +1210,8 @@ export default function EnergyHarvestingDashboard() {
 
             {/* Copyright */}
             <p className="text-gray-500 text-xs mt-4 text-center">
-              &copy; 2025 EnergyHarvest. All rights reserved. | Energy
-              Harvesting System Dashboard v2.0 | Ready for ESP8266 Integration
+              &copy; 2025 EnergyHarvest. All rights reserved. | Smart Panel
+              Dashboard v2.0 | Ready for ESP8266 Integration
             </p>
           </div>
         </footer>
