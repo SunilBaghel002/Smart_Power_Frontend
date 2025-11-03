@@ -17,6 +17,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
 } from "recharts";
 import {
   AlertCircle,
@@ -137,14 +142,14 @@ const pieData = [
 const pricingPlans = [
   {
     name: "Starter",
-    price: "$29",
+    price: "₹2,700",
     period: "month",
     features: ["Up to 1 device", "Basic monitoring", "Email support"],
     cta: "Get Started",
   },
   {
     name: "Professional",
-    price: "$79",
+    price: "₹7,900",
     period: "month",
     features: [
       "Up to 5 devices",
@@ -167,6 +172,15 @@ const pricingPlans = [
     ],
     cta: "Contact Sales",
   },
+];
+
+const componentDurability = [
+  { name: "Piezo Sensor", durability: 92, reliability: 88, lifespan: 95 },
+  { name: "Li-ion Battery", durability: 78, reliability: 75, lifespan: 70 },
+  { name: "Voltage Regulator", durability: 85, reliability: 82, lifespan: 88 },
+  { name: "TP4056 Module", durability: 88, reliability: 90, lifespan: 92 },
+  { name: "DC-DC Converter", durability: 91, reliability: 89, lifespan: 93 },
+  { name: "BMS Module", durability: 94, reliability: 92, lifespan: 96 },
 ];
 
 export default function EnergyHarvestingDashboard() {
@@ -235,16 +249,19 @@ export default function EnergyHarvestingDashboard() {
   const batteryLevel = 42;
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white px-6 lg:px-12 py-8">
+    <div
+      className="min-h-screen bg-white"
+      style={{ fontFamily: "'Geist', sans-serif" }}
+    >
+      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 lg:px-12 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-2">
-            <Zap className="w-10 h-10" />
-            <h1 className="text-4xl font-bold">
-              Energy Harvesting System Dashboard
-            </h1>
+            <div className="bg-white rounded-lg p-2">
+              <Zap className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h1 className="text-4xl font-bold">Energy Harvesting Dashboard</h1>
           </div>
-          <p className="text-teal-100">
+          <p className="text-gray-200">
             Real-time monitoring and analytics for piezoelectric energy
             generation
           </p>
@@ -490,6 +507,43 @@ export default function EnergyHarvestingDashboard() {
             </ResponsiveContainer>
           </div>
 
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-900">
+                Component Durability Assessment
+              </h2>
+              <p className="text-gray-500 text-sm mt-1">
+                Multi-factor health analysis of all components
+              </p>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={componentDurability}>
+                <PolarGrid stroke="#e5e7eb" />
+                <PolarAngleAxis dataKey="name" stroke="#9ca3af" />
+                <PolarRadiusAxis
+                  stroke="#9ca3af"
+                  angle={90}
+                  domain={[0, 100]}
+                />
+                <Radar
+                  name="Durability"
+                  dataKey="durability"
+                  stroke="#10b981"
+                  fill="#10b981"
+                  fillOpacity={0.5}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+
           {/* Step Frequency Analysis */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm lg:col-span-2">
             <div className="mb-6">
@@ -532,7 +586,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Component Status & Health Section */}
+        {/* Component Status Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Component Status & Efficiency
@@ -619,7 +673,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Alerts & Notifications Section */}
+        {/* Alerts Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Alerts & Notifications
@@ -656,7 +710,7 @@ export default function EnergyHarvestingDashboard() {
           </div>
         </div>
 
-        {/* Real-time Metrics Grid */}
+        {/* Real-time Metrics */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Real-time Electrical Metrics
@@ -753,12 +807,12 @@ export default function EnergyHarvestingDashboard() {
                 key={idx}
                 className={`rounded-lg border-2 p-8 transition-transform hover:scale-105 ${
                   plan.popular
-                    ? "border-teal-600 bg-gradient-to-br from-teal-50 to-cyan-50 shadow-lg"
+                    ? "border-emerald-600 bg-gradient-to-br from-emerald-50 to-teal-50 shadow-lg"
                     : "border-gray-200 bg-white shadow-sm"
                 }`}
               >
                 {plan.popular && (
-                  <div className="mb-4 inline-block bg-teal-600 text-white px-4 py-1 rounded-full text-xs font-semibold">
+                  <div className="mb-4 inline-block bg-emerald-600 text-white px-4 py-1 rounded-full text-xs font-semibold">
                     Most Popular
                   </div>
                 )}
@@ -775,7 +829,7 @@ export default function EnergyHarvestingDashboard() {
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, fidx) => (
                     <li key={fidx} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-teal-600 rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
                       <span className="text-gray-700">{feature}</span>
                     </li>
                   ))}
@@ -787,7 +841,7 @@ export default function EnergyHarvestingDashboard() {
                   }
                   className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
                     plan.popular
-                      ? "bg-teal-600 text-white hover:bg-teal-700"
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700"
                       : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                   }`}
                 >
@@ -798,12 +852,12 @@ export default function EnergyHarvestingDashboard() {
             ))}
           </div>
 
-          <div className="mt-8 p-6 bg-teal-50 border border-teal-200 rounded-lg text-center">
+          <div className="mt-8 p-6 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
             <p className="text-gray-700">
               Want to explore more features?{" "}
               <a
                 href="https://example.com/docs"
-                className="text-teal-600 font-semibold hover:underline"
+                className="text-emerald-600 font-semibold hover:underline"
               >
                 View Documentation
               </a>
