@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -8,1288 +8,341 @@ import {
   Area,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
 } from "recharts";
 import {
-  AlertCircle,
-  Battery,
   Zap,
   Activity,
   TrendingUp,
-  AlertTriangle,
-  CheckCircle,
+  Battery,
   Clock,
-  ArrowRight,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Mail,
-  Phone,
-  MapPin,
+  Wifi,
+  WifiOff,
   X,
-  Leaf,
   Share2,
   Copy,
   Check,
-  Home,
+  Leaf,
   IndianRupee,
+  Home,
+  AlertTriangle,
+  AlertCircle,
 } from "lucide-react";
 
-const PIE_COLORS = ["#f97316", "#d946ef", "#a855f7", "#ec4899", "#f43f5e"];
+const ESP_URL = "http://10.56.24.97";
 
-// Static energy data
-const energyData = [
-  { time: "0:00", energy: 245, power: 65 },
-  { time: "1:00", energy: 312, power: 78 },
-  { time: "2:00", energy: 289, power: 72 },
-  { time: "3:00", energy: 356, power: 89 },
-  { time: "4:00", energy: 401, power: 102 },
-  { time: "5:00", energy: 478, power: 125 },
-  { time: "6:00", energy: 532, power: 138 },
-  { time: "7:00", energy: 618, power: 156 },
-  { time: "8:00", energy: 695, power: 178 },
-  { time: "9:00", energy: 524, power: 132 },
-  { time: "10:00", energy: 456, power: 114 },
-  { time: "11:00", energy: 389, power: 98 },
-  { time: "12:00", energy: 612, power: 147 },
-  { time: "13:00", energy: 567, power: 135 },
-  { time: "14:00", energy: 634, power: 159 },
-  { time: "15:00", energy: 701, power: 178 },
-  { time: "16:00", energy: 623, power: 156 },
-  { time: "17:00", energy: 545, power: 136 },
-  { time: "18:00", energy: 412, power: 103 },
-  { time: "19:00", energy: 334, power: 83 },
-  { time: "20:00", energy: 289, power: 72 },
-  { time: "21:00", energy: 245, power: 61 },
-  { time: "22:00", energy: 198, power: 49 },
-  { time: "23:00", energy: 156, power: 39 },
-];
-
-const trendData = [
-  { day: "Mon", generated: 4500, harvested: 3800 },
-  { day: "Tue", generated: 5120, harvested: 4300 },
-  { day: "Wed", generated: 4890, harvested: 4100 },
-  { day: "Thu", generated: 5600, harvested: 4700 },
-  { day: "Fri", generated: 6200, harvested: 5200 },
-  { day: "Sat", generated: 5890, harvested: 4900 },
-  { day: "Sun", generated: 5340, harvested: 4500 },
-];
-
-const stepFrequency = [
-  { hour: "0:00", steps: 45, frequency: 42 },
-  { hour: "1:00", steps: 52, frequency: 48 },
-  { hour: "2:00", steps: 78, frequency: 65 },
-  { hour: "3:00", steps: 125, frequency: 98 },
-  { hour: "4:00", steps: 156, frequency: 125 },
-  { hour: "5:00", steps: 198, frequency: 156 },
-  { hour: "6:00", steps: 234, frequency: 189 },
-  { hour: "7:00", steps: 267, frequency: 210 },
-  { hour: "8:00", steps: 289, frequency: 234 },
-  { hour: "9:00", steps: 234, frequency: 189 },
-  { hour: "10:00", steps: 156, frequency: 125 },
-  { hour: "11:00", steps: 98, frequency: 78 },
-];
-
-const componentStatus = [
-  {
-    name: "Piezoelectric Sensor",
-    efficiency: 92,
-    status: "healthy",
-    lifetime: "85%",
-    voltage: "4.2V",
-  },
-  {
-    name: "Li-ion Battery",
-    efficiency: 78,
-    status: "warning",
-    lifetime: "45%",
-    voltage: "3.7V",
-  },
-  {
-    name: "Voltage Regulator (AMS1117)",
-    efficiency: 85,
-    status: "warning",
-    lifetime: "72%",
-    voltage: "5.0V",
-  },
-  {
-    name: "TP4056 Charging Module",
-    efficiency: 88,
-    status: "healthy",
-    lifetime: "92%",
-    voltage: "4.2V",
-  },
-  {
-    name: "DC-DC Boost Converter",
-    efficiency: 91,
-    status: "healthy",
-    lifetime: "88%",
-    voltage: "12V",
-  },
-  {
-    name: "BMS 3s Battery Module",
-    efficiency: 94,
-    status: "healthy",
-    lifetime: "95%",
-    voltage: "11.1V",
-  },
-];
-
-const pieData = [
-  { name: "Smart Panel Contribution", value: 35 },
-  { name: "Piezoelectric Contribution", value: 45 },
-  { name: "Other Sources", value: 20 },
-];
-
-const pricingPlans = [
-  {
-    name: "Starter Smart Panel",
-    price: "₹2,700",
-    area: "10 m²",
-    period: "month",
-    specs: [
-      "Smart Panel 10 m²",
-      "Up to 1 device",
-      "Basic monitoring",
-      "Email support",
-    ],
-    cta: "Get Started",
-  },
-  {
-    name: "Professional Smart Panel",
-    price: "₹7,900",
-    area: "25 m²",
-    period: "month",
-    specs: [
-      "Smart Panel 25 m²",
-      "Up to 5 devices",
-      "Advanced analytics",
-      "Priority support",
-      "Real-time alerts",
-    ],
-    popular: true,
-    cta: "Start Free Trial",
-  },
-  {
-    name: "Enterprise Smart Solution",
-    price: "Custom",
-    area: "50+ m²",
-    period: "pricing",
-    specs: [
-      "Custom smart arrays",
-      "Unlimited devices",
-      "Custom integrations",
-      "Dedicated support",
-      "API access",
-    ],
-    cta: "Contact Sales",
-  },
-];
-
-const componentDurability = [
-  { name: "Piezo Sensor", durability: 92, reliability: 88, lifespan: 95 },
-  { name: "Li-ion Battery", durability: 78, reliability: 75, lifespan: 70 },
-  { name: "Voltage Regulator", durability: 85, reliability: 82, lifespan: 88 },
-  { name: "TP4056 Module", durability: 88, reliability: 90, lifespan: 92 },
-  { name: "DC-DC Converter", durability: 91, reliability: 89, lifespan: 93 },
-  { name: "BMS Module", durability: 94, reliability: 92, lifespan: 96 },
-];
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12)
-    return {
-      text: "Good Morning",
-      emoji: "Sunrise",
-      color: "from-amber-500 to-orange-500",
-    };
-  if (hour < 17)
-    return {
-      text: "Good Afternoon",
-      emoji: "Sun",
-      color: "from-orange-500 to-rose-500",
-    };
-  if (hour < 21)
-    return {
-      text: "Good Evening",
-      emoji: "Sunset",
-      color: "from-purple-500 to-pink-500",
-    };
-  return {
-    text: "Good Night",
-    emoji: "Moon",
-    color: "from-indigo-500 to-purple-500",
-  };
-};
-
-export default function EnergyHarvestingDashboard() {
+export default function EnergyDashboard() {
   const [greeting, setGreeting] = useState(getGreeting());
-  const [visibleSections, setVisibleSections] = useState({});
   const [showBillboard, setShowBillboard] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
+  // Live ESP Data
+  const [espData, setEspData] = useState({
+    steps: 0,
+    stepVoltage: 0.0,
+    totalVoltage: 0.0,
+    lastUpdate: 0,
+  });
+  const [espInfo, setEspInfo] = useState({ ip: "-", mac: "Unknown" });
+  const [lastUpdateStr, setLastUpdateStr] = useState("Never");
+
+  // Chart History — ARRAY OF OBJECTS (Fixed!)
+  const [history, setHistory] = useState([]);
+  const maxPoints = 24;
+  const prevDataRef = useRef(espData);
+
+  // Fetch ESP Data
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => ({
-              ...prev,
-              [entry.target.id]: true,
-            }));
-          }
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${ESP_URL}/data`, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed");
+        const d = await res.json();
+
+        const prev = prevDataRef.current;
+        if (
+          d.steps !== prev.steps ||
+          Math.abs(d.stepVoltage - prev.stepVoltage) > 0.001 ||
+          Math.abs(d.totalVoltage - prev.totalVoltage) > 0.001
+        ) {
+          setIsUpdating(true);
+          setTimeout(() => setIsUpdating(false), 600);
+        }
+
+        setEspData(d);
+        prevDataRef.current = d;
+        setIsOnline(true);
+        setLastUpdateStr(new Date().toLocaleTimeString());
+
+        const now = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
         });
-      },
-      { threshold: 0.1 }
-    );
 
-    document
-      .querySelectorAll("[data-scroll]")
-      .forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+        setHistory((prev) => {
+          const newEntry = {
+            time: now,
+            energy: d.totalVoltage * 0.1, // Wh
+            power: d.stepVoltage * 10,    // W
+            steps: d.steps,
+          };
+          return [...prev, newEntry].slice(-maxPoints);
+        });
+      } catch (err) {
+        setIsOnline(false);
+      }
+    };
+
+    const fetchInfo = async () => {
+      try {
+        const res = await fetch(`${ESP_URL}/info`, { cache: "no-store" });
+        if (res.ok) {
+          const i = await res.json();
+          setEspInfo({ ip: i.ip || "-", mac: i.mac || "Unknown" });
+        }
+      } catch {}
+    };
+
+    fetchData();
+    fetchInfo();
+    const id = setInterval(fetchData, 1000);
+    return () => clearInterval(id);
   }, []);
 
+  // Greeting
   useEffect(() => {
-    const interval = setInterval(
-      () => setGreeting(getGreeting()),
-      5 * 60 * 1000
-    );
-    return () => clearInterval(interval);
+    const id = setInterval(() => setGreeting(getGreeting()), 5 * 60 * 1000);
+    return () => clearInterval(id);
   }, []);
 
-  const alerts = [
-    {
-      id: 1,
-      type: "warning",
-      message: "Battery charge level below 20%",
-      component: "TP4056 Charging Module",
-    },
-    {
-      id: 2,
-      type: "critical",
-      message: "Voltage regulator efficiency dropped to 85%",
-      component: "AMS1117 Regulator",
-    },
-  ];
+  // KPI
+  const totalEnergy = (espData.totalVoltage * 0.1).toFixed(2);
+  const avgPower = (espData.stepVoltage * 10).toFixed(2);
+  const batteryLevel = Math.min(100, Math.round(espData.totalVoltage * 8));
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "healthy":
-        return "bg-emerald-50 border-emerald-200";
-      case "warning":
-        return "bg-amber-50 border-amber-200";
-      case "critical":
-        return "bg-red-50 border-red-200";
-      default:
-        return "bg-gray-50 border-gray-200";
-    }
-  };
+  const alerts = batteryLevel < 30
+    ? [{ type: "critical", message: "Battery critically low!" }]
+    : batteryLevel < 50
+    ? [{ type: "warning", message: "Battery below 50%" }]
+    : [];
 
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case "healthy":
-        return "bg-emerald-500 text-white";
-      case "warning":
-        return "bg-amber-500 text-white";
-      case "critical":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  };
+  function getGreeting() {
+    const h = new Date().getHours();
+    if (h < 12) return { text: "Good Morning", color: "from-amber-500 to-orange-500" };
+    if (h < 17) return { text: "Good Afternoon", color: "from-orange-500 to-rose-500" };
+    if (h < 21) return { text: "Good Evening", color: "from-purple-500 to-pink-500" };
+    return { text: "Good Night", color: "from-indigo-500 to-purple-500" };
+  }
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "healthy":
-        return <CheckCircle className="w-4 h-4 text-emerald-600" />;
-      case "warning":
-        return <AlertTriangle className="w-4 h-4 text-amber-600" />;
-      case "critical":
-        return <AlertCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return null;
-    }
-  };
-
-  // KPI calculations
-  const totalEnergyGenerated = energyData.reduce((sum, d) => sum + d.energy, 0);
-  const avgPower = (
-    energyData.reduce((sum, d) => sum + d.power, 0) / energyData.length
-  ).toFixed(2);
-  const peakVoltage = 12.5;
-  const systemUptime = "24d 14h 32m";
-  const batteryLevel = 42;
-
-  const handleCopyShare = () => {
-    const text = document.getElementById("shareText")?.innerText || "";
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+  const handleCopy = () => {
+    const text = `ESP8266 harvested ${totalEnergy} Wh today! Saved ₹${Math.round(parseFloat(totalEnergy) * 8.5 / 1000)}`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div
-      className="min-h-screen bg-white"
-      style={{
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      }}
-    >
-      <style>{`
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .animate-on-scroll { animation: slideUp 0.8s ease-out forwards; }
-        [data-scroll] { opacity: 0; }
-        [data-scroll].visible { animation: slideUp 0.8s ease-out forwards; }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-        .animate-slideUp { animation: slideUp 0.5s ease-out; }
-      `}</style>
-
+    <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
-      <div
-        className={`bg-gradient-to-r ${greeting.color} text-white px-6 lg:px-12 py-12`}
-      >
+      <header className={`bg-gradient-to-r ${greeting.color} text-white p-8`}>
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 animate-on-scroll">
-            <p className="text-white/80 text-lg mb-2">
-              {greeting.emoji} {greeting.text}!
-            </p>
-            <h1 className="text-4xl lg:text-5xl font-bold">
-              Smart Panel Energy Dashboard
-            </h1>
-          </div>
-          <p className="text-white/90 text-lg">
-            Real-time monitoring and analytics for smart energy harvesting
+          <h1 className="text-4xl md:text-5xl font-bold">{greeting.text}!</h1>
+          <p className="text-xl mt-2 flex items-center gap-2">
+            Live ESP8266 Dashboard
+            {isOnline ? (
+              <span className="flex items-center gap-1 text-green-300">
+                <Wifi className="w-5 h-5 animate-pulse" /> ONLINE
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-red-300">
+                <WifiOff className="w-5 h-5" /> OFFLINE
+              </span>
+            )}
           </p>
         </div>
-      </div>
+      </header>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12">
-        {/* KPI Section */}
-        <div
-          data-scroll
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12 ${
-            visibleSections["kpi"] ? "visible" : ""
-          }`}
-          id="kpi"
-        >
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">
-                  Total Energy Generated
-                </p>
-                <h3 className="text-3xl font-bold text-gray-900">
-                  {(totalEnergyGenerated / 1000).toFixed(2)} kWh
-                </h3>
-              </div>
-              <Zap className="w-8 h-8 text-orange-500" />
-            </div>
-            <p className="text-gray-500 text-xs">+12.5% from yesterday</p>
-          </div>
+      <main className="max-w-7xl mx-auto p-6 space-y-8">
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">
-                  Average Power Output
-                </p>
-                <h3 className="text-3xl font-bold text-gray-900">
-                  {avgPower} W
-                </h3>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {[
+            { label: "Steps", value: espData.steps, icon: Zap, color: "text-orange-500" },
+            { label: "Step V", value: `${espData.stepVoltage.toFixed(3)}V`, icon: Activity, color: "text-rose-500" },
+            { label: "Total V", value: `${espData.totalVoltage.toFixed(3)}V`, icon: TrendingUp, color: "text-purple-500" },
+            { label: "Battery", value: `${batteryLevel}%`, icon: Battery, color: "text-pink-500", progress: true },
+            { label: "Last Update", value: lastUpdateStr, icon: Clock, color: "text-violet-500", small: true },
+          ].map((k, i) => (
+            <div
+              key={i}
+              className={`bg-white rounded-xl p-5 shadow-sm border border-gray-200 transition-all ${
+                isUpdating ? "animate-pulse" : ""
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{k.label}</p>
+                  <p className={`text-2xl font-bold ${k.small ? "text-lg" : ""}`}>{k.value}</p>
+                </div>
+                <k.icon className={`w-8 h-8 ${k.color}`} />
               </div>
-              <Activity className="w-8 h-8 text-rose-500" />
+              {k.progress && (
+                <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-pink-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${batteryLevel}%` }}
+                  />
+                </div>
+              )}
             </div>
-            <p className="text-gray-500 text-xs">Current 24hr average</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">
-                  Peak Voltage Output
-                </p>
-                <h3 className="text-3xl font-bold text-gray-900">
-                  {peakVoltage}V
-                </h3>
-              </div>
-              <TrendingUp className="w-8 h-8 text-purple-500" />
-            </div>
-            <p className="text-gray-500 text-xs">Maximum recorded today</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">
-                  Battery Charge Level
-                </p>
-                <h3 className="text-3xl font-bold text-gray-900">
-                  {batteryLevel}%
-                </h3>
-              </div>
-              <Battery className="w-8 h-8 text-pink-500" />
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-pink-500 h-2 rounded-full"
-                style={{ width: `${batteryLevel}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">
-                  System Uptime
-                </p>
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {systemUptime}
-                </h3>
-              </div>
-              <Clock className="w-8 h-8 text-violet-500" />
-            </div>
-            <p className="text-gray-500 text-xs">Since last reboot</p>
-          </div>
+          ))}
         </div>
 
-        {/* Floating Billboard Button */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <button
-            onClick={() => setShowBillboard(true)}
-            className="bg-gradient-to-r from-orange-500 to-rose-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center gap-2"
-          >
-            <Zap className="w-5 h-5" />
-            <span className="font-semibold">Today’s Impact</span>
-          </button>
-        </div>
-
-        {/* BILLBOARD MODAL - WHITE BACKGROUND */}
-        {showBillboard && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative overflow-hidden animate-slideUp border border-gray-200">
-              <button
-                onClick={() => setShowBillboard(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
-              >
-                <X className="w-6 h-6" />
-              </button>
-
-              <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold text-gray-900 mb-2">
-                  Today's Energy Harvest
-                </h2>
-                <p className="text-lg text-gray-600">
-                  Your Smart Panel is powering a greener future
-                </p>
-              </div>
-
-              <div className="text-center mb-10">
-                <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">
-                  {(totalEnergyGenerated / 1000).toFixed(2)} kWh
-                </div>
-                <p className="text-xl text-gray-700 mt-2">Generated Today</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-sm border border-green-100 text-center hover:shadow-md transition">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
-                    <Leaf className="w-6 h-6 text-green-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-green-700">
-                    {((totalEnergyGenerated / 1000) * 0.7).toFixed(1)} kg
-                  </p>
-                  <p className="text-sm text-gray-700 mt-1">CO₂ Avoided</p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    = {Math.round(((totalEnergyGenerated / 1000) * 0.7) / 0.04)}{" "}
-                    trees
-                  </p>
-                </div>
-
-                <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-5 shadow-sm border border-amber-100 text-center hover:shadow-md transition">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-amber-100 rounded-full flex items-center justify-center">
-                    <IndianRupee className="w-6 h-6 text-amber-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-amber-700">
-                    ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}
-                  </p>
-                  <p className="text-sm text-gray-700 mt-1">Saved on Bills</p>
-                  <p className="text-xs text-gray-500 mt-2">@ ₹8.5/kWh</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 shadow-sm border border-purple-100 text-center hover:shadow-md transition">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Home className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-purple-700">
-                    {(totalEnergyGenerated / 1000 / 3.5).toFixed(1)}
-                  </p>
-                  <p className="text-sm text-gray-700 mt-1">Homes Powered</p>
-                  <p className="text-xs text-gray-500 mt-2">for 1 hour</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-orange-600" />
-                  Share Your Impact
-                </h3>
-                <p
-                  className="text-sm text-gray-700 mb-4 leading-relaxed"
-                  id="shareText"
-                >
-                  Today, my Smart Panel generated{" "}
-                  {(totalEnergyGenerated / 1000).toFixed(2)} kWh of clean energy
-                  — saving ₹{Math.round((totalEnergyGenerated / 1000) * 8.5)}{" "}
-                  and {((totalEnergyGenerated / 1000) * 0.7).toFixed(1)} kg of
-                  CO₂! Powered by EnergyHarvest
-                </p>
-                <button
-                  onClick={handleCopyShare}
-                  className="bg-orange-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-orange-600 transition flex items-center gap-2 mx-auto"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                  {copied ? "Copied!" : "Copy to Share"}
-                </button>
-              </div>
-
-              <div className="text-center mt-8">
-                <p className="text-sm text-gray-500 italic">
-                  "Every watt counts. Every day matters."
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                  Dashboard updated: {new Date().toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Charts Section */}
-        <div
-          data-scroll
-          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 ${
-            visibleSections["charts"] ? "visible" : ""
-          }`}
-          id="charts"
-        >
-          {/* Energy Generation Over Time */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Energy Generation Over 24 Hours
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Real-time energy production tracking
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={energyData}>
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">Energy (Wh)</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={history}>
                 <defs>
-                  <linearGradient id="colorEnergy" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="energy" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#f97316" stopOpacity={0.8} />
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="time" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value) => `${value} Wh`}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="energy"
-                  stroke="#f97316"
-                  fillOpacity={1}
-                  fill="url(#colorEnergy)"
-                />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip formatter={(v) => `${v} Wh`} />
+                <Area type="monotone" dataKey="energy" stroke="#f97316" fill="url(#energy)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Power Output Trend */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Power Output Trend
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Hourly power measurement analysis
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={energyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="time" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value) => `${value} W`}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="power"
-                  stroke="#d946ef"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Power (W)"
-                />
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">Power (W)</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip formatter={(v) => `${v} W`} />
+                <Line type="monotone" dataKey="power" stroke="#d946ef" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Weekly Energy Comparison */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Weekly Energy Analysis
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Generated vs Harvested energy comparison
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="day" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value) => `${value} Wh`}
-                />
-                <Legend />
-                <Bar
-                  dataKey="generated"
-                  fill="#a855f7"
-                  radius={[8, 8, 0, 0]}
-                  name="Generated (Wh)"
-                />
-                <Bar
-                  dataKey="harvested"
-                  fill="#ec4899"
-                  radius={[8, 8, 0, 0]}
-                  name="Harvested (Wh)"
-                />
+          <div className="bg-white p-6 rounded-xl shadow-sm border lg:col-span-2">
+            <h3 className="text-lg font-semibold mb-4">Steps Detected</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="steps" fill="#a855f7" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-
-          {/* Energy Source Distribution */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Energy Source Distribution
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Contribution breakdown by source
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name} ${value}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={PIE_COLORS[index % PIE_COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${value}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Component Durability */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Component Durability Assessment
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Multi-factor health analysis of all components
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={componentDurability}>
-                <PolarGrid stroke="#e5e7eb" />
-                <PolarAngleAxis dataKey="name" stroke="#9ca3af" />
-                <PolarRadiusAxis
-                  stroke="#9ca3af"
-                  angle={90}
-                  domain={[0, 100]}
-                />
-                <Radar
-                  name="Durability"
-                  dataKey="durability"
-                  stroke="#f97316"
-                  fill="#f97316"
-                  fillOpacity={0.5}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Legend />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Step Frequency */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm lg:col-span-2">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Step Frequency & Activity Level
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Kinetic energy harvesting rates throughout the day
-              </p>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={stepFrequency}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="hour" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="steps"
-                  stroke="#f97316"
-                  strokeWidth={2}
-                  name="Steps Detected"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="frequency"
-                  stroke="#a855f7"
-                  strokeWidth={2}
-                  name="Frequency (Hz)"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Component Status */}
-        <div
-          data-scroll
-          className={`mb-12 ${visibleSections["components"] ? "visible" : ""}`}
-          id="components"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Component Status & Efficiency
-          </h2>
-          <p className="text-gray-500 mb-6">
-            Real-time health monitoring of all system components
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {componentStatus.map((component, idx) => (
-              <div
-                key={idx}
-                className={`border rounded-lg p-6 ${getStatusColor(
-                  component.status
-                )}`}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-900 text-base">
-                      {component.name}
-                    </h3>
-                    <p className="text-gray-500 text-sm mt-1">
-                      Efficiency & Performance
-                    </p>
-                  </div>
-                  {getStatusIcon(component.status)}
-                </div>
-
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Efficiency
-                    </span>
-                    <span className="text-sm font-bold text-gray-900">
-                      {component.efficiency}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${
-                        component.efficiency > 90
-                          ? "bg-emerald-500"
-                          : component.efficiency > 80
-                          ? "bg-amber-500"
-                          : "bg-red-500"
-                      }`}
-                      style={{ width: `${component.efficiency}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-600 font-medium">
-                      Lifetime
-                    </p>
-                    <p className="text-sm font-bold text-gray-900">
-                      {component.lifetime}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600 font-medium">Voltage</p>
-                    <p className="text-sm font-bold text-gray-900">
-                      {component.voltage}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-current border-opacity-20">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
-                      component.status
-                    )}`}
-                  >
-                    {component.status.charAt(0).toUpperCase() +
-                      component.status.slice(1)}
-                  </span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 
         {/* Alerts */}
-        <div
-          data-scroll
-          className={`mb-12 ${visibleSections["alerts"] ? "visible" : ""}`}
-          id="alerts"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Alerts & Notifications
-          </h2>
-          <p className="text-gray-500 mb-6">
-            Active system alerts and maintenance notifications
-          </p>
-          <div className="space-y-4">
-            {alerts.map((alert) => (
+        {alerts.length > 0 && (
+          <div className="space-y-3">
+            {alerts.map((a, i) => (
               <div
-                key={alert.id}
-                className={`border-l-4 p-4 rounded-lg ${
-                  alert.type === "critical"
-                    ? "bg-red-50 border-red-500 text-red-900"
-                    : "bg-amber-50 border-amber-500 text-amber-900"
+                key={i}
+                className={`flex items-center gap-3 p-4 rounded-lg border-l-4 ${
+                  a.type === "critical" ? "bg-red-50 border-red-500" : "bg-amber-50 border-amber-500"
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  {alert.type === "critical" ? (
-                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  )}
-                  <div className="flex-1">
-                    <p className="font-semibold">{alert.message}</p>
-                    <p className="text-sm opacity-75 mt-1">
-                      Component: {alert.component}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Real-time Metrics */}
-        <div
-          data-scroll
-          className={`mb-12 ${visibleSections["metrics"] ? "visible" : ""}`}
-          id="metrics"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Real-time Electrical Metrics
-          </h2>
-          <p className="text-gray-500 mb-6">
-            Current system performance indicators
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                label: "Sensor Input Voltage",
-                value: "2.45V",
-                unit: "V",
-                color: "orange",
-              },
-              {
-                label: "Sensor Input Current",
-                value: "145mA",
-                unit: "mA",
-                color: "rose",
-              },
-              {
-                label: "Rectifier Output",
-                value: "1.92V",
-                unit: "V",
-                color: "purple",
-              },
-              {
-                label: "Charging Status",
-                value: "Active",
-                unit: "Status",
-                color: "pink",
-              },
-              {
-                label: "Battery Voltage",
-                value: "3.72V",
-                unit: "V",
-                color: "violet",
-              },
-              {
-                label: "Boost Converter Output",
-                value: "11.85V",
-                unit: "V",
-                color: "magenta",
-              },
-              {
-                label: "System Load Current",
-                value: "280mA",
-                unit: "mA",
-                color: "fuchsia",
-              },
-              {
-                label: "Temperature",
-                value: "32.5°C",
-                unit: "°C",
-                color: "amber",
-              },
-            ].map((metric, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
-              >
-                <p className="text-gray-500 text-sm font-medium mb-2">
-                  {metric.label}
-                </p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {metric.value}
-                </p>
-                <div
-                  className={`inline-block mt-3 px-2 py-1 rounded text-xs font-semibold bg-${metric.color}-100 text-${metric.color}-700`}
-                >
-                  {metric.unit}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Pricing */}
-        <div
-          data-scroll
-          className={`mb-12 ${visibleSections["pricing"] ? "visible" : ""}`}
-          id="pricing"
-        >
-          <div className="mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Upgrade Your Smart Panel
-            </h2>
-            <p className="text-gray-500">
-              Choose the perfect smart panel plan for your energy harvesting
-              needs
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pricingPlans.map((plan, idx) => (
-              <div
-                key={idx}
-                className={`rounded-lg border-2 p-8 transition-transform hover:scale-105 ${
-                  plan.popular
-                    ? "border-orange-500 bg-gradient-to-br from-orange-50 to-rose-50 shadow-lg"
-                    : "border-gray-200 bg-white shadow-sm"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="mb-4 inline-block bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                    Most Popular
-                  </div>
+                {a.type === "critical" ? (
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                ) : (
+                  <AlertTriangle className="w-5 h-5 text-amber-600" />
                 )}
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {plan.name}
-                </h3>
-                <div className="mb-1 text-orange-600 font-semibold text-lg">
-                  {plan.area}
-                </div>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {plan.price}
-                  </span>
-                  <span className="text-gray-500 ml-2">/{plan.period}</span>
-                </div>
+                <p className="font-medium">{a.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
-                <ul className="space-y-4 mb-8">
-                  {plan.specs.map((spec, sidx) => (
-                    <li key={sidx} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                      <span className="text-gray-700">{spec}</span>
-                    </li>
-                  ))}
-                </ul>
+        {/* Billboard Button */}
+        <button
+          onClick={() => setShowBillboard(true)}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-orange-500 to-rose-500 text-white rounded-full p-4 shadow-lg hover:scale-110 transition-all flex items-center gap-2 z-10"
+        >
+          <Zap className="w-5 h-5" />
+          <span className="font-bold">Today’s Impact</span>
+        </button>
 
+        {/* Billboard Modal */}
+        {showBillboard && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative">
+              <button
+                onClick={() => setShowBillboard(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <h2 className="text-3xl font-bold text-center mb-6">Today's Harvest</h2>
+              <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500 text-center mb-8">
+                {totalEnergy} Wh
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="bg-green-50 p-4 rounded-xl">
+                  <Leaf className="w-10 h-10 mx-auto text-green-600 mb-2" />
+                  <p className="text-2xl font-bold text-green-700">
+                    {((parseFloat(totalEnergy) * 0.7) / 1000).toFixed(2)} kg
+                  </p>
+                  <p className="text-sm text-gray-600">CO₂ Saved</p>
+                </div>
+                <div className="bg-amber-50 p-4 rounded-xl">
+                  <IndianRupee className="w-10 h-10 mx-auto text-amber-600 mb-2" />
+                  <p className="text-2xl font-bold text-amber-700">
+                    ₹{Math.round(parseFloat(totalEnergy) * 8.5 / 1000)}
+                  </p>
+                  <p className="text-sm text-gray-600">Bill Saved</p>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-xl">
+                  <Home className="w-10 h-10 mx-auto text-purple-600 mb-2" />
+                  <p className="text-2xl font-bold text-purple-700">
+                    {(parseFloat(totalEnergy) / 3.5).toFixed(1)}
+                  </p>
+                  <p className="text-sm text-gray-600">Homes (1hr)</p>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 bg-gray-50 rounded-xl">
                 <button
-                  onClick={() =>
-                    window.open("https://example.com/pricing", "_blank")
-                  }
-                  className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
-                    plan.popular
-                      ? "bg-orange-500 text-white hover:bg-orange-600"
-                      : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                  }`}
+                  onClick={handleCopy}
+                  className="w-full bg-orange-500 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-orange-600 transition"
                 >
-                  {plan.cta}
-                  <ArrowRight className="w-4 h-4" />
+                  {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                  {copied ? "Copied!" : "Copy to Share"}
                 </button>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-8 p-6 bg-orange-50 border border-orange-200 rounded-lg text-center">
-            <p className="text-gray-700">
-              Want to explore more features?{" "}
-              <a
-                href="https://example.com/docs"
-                className="text-orange-600 font-semibold hover:underline"
-              >
-                View Documentation
-              </a>
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <footer
-          data-scroll
-          className={`border-t-2 border-gray-200 pt-12 pb-6 ${
-            visibleSections["footer"] ? "visible" : ""
-          }`}
-          id="footer"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                About EnergyHarvest
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Leading provider of smart panel energy harvesting solutions for
-                sustainable power generation.
-              </p>
-              <div className="flex gap-4 mt-4">
-                <a
-                  href="#"
-                  className="text-orange-500 hover:text-orange-600 transition"
-                >
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="text-orange-500 hover:text-orange-600 transition"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="text-orange-500 hover:text-orange-600 transition"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Smart Panels
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Monitoring System
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Integration Guide
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    API Documentation
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-orange-500 transition text-sm"
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Contact</h3>
-              <ul className="space-y-3">
-                <li className="flex gap-3">
-                  <Phone className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-600 text-sm">
-                    +91 (123) 456-7890
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <Mail className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-600 text-sm">
-                    support@energyharvest.com
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <MapPin className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-600 text-sm">India</span>
-                </li>
-              </ul>
             </div>
           </div>
+        )}
+      </main>
 
-          <div className="border-t border-gray-200 pt-6">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-gray-600 text-sm">
-                Last updated: {new Date().toLocaleString()} | System Status:{" "}
-                <span className="font-semibold text-emerald-600">
-                  Operational
-                </span>
-              </p>
-              <div className="flex gap-6">
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-orange-500 transition text-sm"
-                >
-                  Privacy Policy
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-orange-500 transition text-sm"
-                >
-                  Terms of Service
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-orange-500 transition text-sm"
-                >
-                  Cookie Policy
-                </a>
-              </div>
-            </div>
-            <p className="text-gray-500 text-xs mt-4 text-center">
-              &copy; 2025 EnergyHarvest. All rights reserved. | Smart Panel
-              Dashboard v2.0 | Ready for ESP8266 Integration
-            </p>
-          </div>
-        </footer>
-      </div>
+      {/* Footer */}
+      <footer className="mt-16 py-8 text-center text-sm text-gray-500 border-t">
+        <p>
+          ESP: <span className="font-mono">{espInfo.ip}</span> | MAC: {espInfo.mac}
+        </p>
+        <p className="mt-1">© 2025 EnergyHarvest. Live with ESP8266.</p>
+      </footer>
     </div>
   );
 }
