@@ -33,7 +33,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const ESP_URL = "http://10.56.24.97";
+const ESP_URL = "http://10.27.213.97";
 
 export default function EnergyDashboard() {
   const [greeting, setGreeting] = useState(getGreeting());
